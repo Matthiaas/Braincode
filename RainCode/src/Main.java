@@ -46,7 +46,7 @@ public class Main extends JPanel {
             lines = parser.parseFiles(files);
         }
 
-        Line.scale(lines, parser.getMaxX(), parser.getMaxY(), width, height);
+        Line.scale(lines, parser.getMinX(), parser.getMinY(), parser.getMaxX(), parser.getMaxY(), width, height);
 
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics g = bufferedImage.getGraphics();
@@ -55,46 +55,39 @@ public class Main extends JPanel {
 
         System.out.println(lines.size() + " lines");
         GaussDistr gauss = new GaussDistr(42);
-        for (int i = 0; i < lines.size(); i = i + 2) {
+        for (int i = 0; i < lines.size(); i++) {
             Line longLine = lines.get(i);
             List<Line> splitLines = Line.betterHack(longLine, width, height, 2, 4, lines.size(), gauss);
-            for (int j = 0; j < splitLines.size(); j = j + 30) {
+            for (int j = 0; j < splitLines.size(); j = j + 60) {
                 Interpolator interpolator = new Casteljau(splitLines.get(j));
                 interpolator.paint(bufferedImage, 0.01, colors[(i * 35 % 17) % colors.length]);
             }
         }
 
-        if (server) {
-            String fileName = "out/" + args[1];
-            File f = new File(fileName);
-            try {
-                ImageIO.write(bufferedImage, "PNG", f);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            JFrame frame = new JFrame();
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setTitle("RainCode");
-            frame.setSize(1600, 800);
-            frame.setLocationRelativeTo(null);
-
-            String fileName = "res/pics/" + System.currentTimeMillis() + "";
-            File f = new File(fileName + ".png");
-            try {
-                ImageIO.write(bufferedImage, "PNG", f);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            JPanel panel = new Main(bufferedImage);
-            frame.add(panel);
-
-            frame.setVisible(true);
-            panel.setVisible(true);
-
-            panel.repaint();
+        String fileName = server ? "out/" + args[1] : "res/pics/" + System.currentTimeMillis() + ".png";
+        File f = new File(fileName);
+        try {
+            ImageIO.write(bufferedImage, "PNG", f);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+        /*
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setTitle("RainCode");
+        frame.setSize(1600, 800);
+        frame.setLocationRelativeTo(null);
+
+        JPanel panel = new Main(bufferedImage);
+        frame.add(panel);
+
+        frame.setVisible(true);
+        panel.setVisible(true);
+
+        panel.repaint();
+        */
+
     }
 
     public void paint(Graphics g) {

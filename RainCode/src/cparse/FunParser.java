@@ -31,7 +31,7 @@ public class FunParser implements Parser {
 
     int index = 0;
     GaussDistr gaussDistr = new GaussDistr(1337);
-    private int maxX = 0, maxY = 0;
+    private int maxX = 0, maxY = 0, minX = 0, minY = 0;
 
     /**
      *
@@ -80,6 +80,16 @@ public class FunParser implements Parser {
     @Override
     public int getMaxY() {
         return maxY;
+    }
+
+    @Override
+    public int getMinX() {
+        return minX;
+    }
+
+    @Override
+    public int getMinY() {
+        return minY;
     }
 
     private Line findCalls(String code){
@@ -145,6 +155,9 @@ public class FunParser implements Parser {
 
             maxX = Math.max(maxX, (int) xyz[0]);
             maxY = Math.max(maxY, (int) xyz[1]);
+            minX = Math.min(minX, (int) xyz[0]);
+            minY = Math.min(minY, (int) xyz[1]);
+
             //System.out.println(n + "\t\t\tx: " + xyz[0] + "\ty: " + xyz[1] + "\tz: " + xyz[2]);
 
            line.add(xyz[0] ,xyz[1], xyz[2]);
