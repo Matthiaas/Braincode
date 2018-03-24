@@ -12,10 +12,7 @@ public class Line {
     private List<Point> points;
 
 
-
-
-
-    private double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE , maxX = 0, maxY = 0;
+    private double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE, maxX = 0, maxY = 0;
 
     public Line() {
         points = new ArrayList<>();
@@ -29,9 +26,9 @@ public class Line {
         double[] r = new double[points.size()];
         for (int i = 0; i < points.size(); i++) {
 
-            r[i] = points.get(i).x ;
-            minX = Double.min(r[i],minX);
-            maxX = Double.max(r[i],maxX);
+            r[i] = points.get(i).x;
+            minX = Double.min(r[i], minX);
+            maxX = Double.max(r[i], maxX);
             r[i] = points.get(i).x;
 
         }
@@ -41,9 +38,9 @@ public class Line {
     public double[] getY() {
         double[] r = new double[points.size()];
         for (int i = 0; i < points.size(); i++) {
-            r[i] = points.get(i).y ;
-            minY = Double.min(r[i],minY);
-            maxY = Double.max(r[i],maxY);
+            r[i] = points.get(i).y;
+            minY = Double.min(r[i], minY);
+            maxY = Double.max(r[i], maxY);
             r[i] = points.get(i).y;
         }
         return r;
@@ -66,7 +63,7 @@ public class Line {
     }
 
     public String toString() {
-        return "Line: \n" + points.stream().map(p -> "("+p.x + "," + p.y + "," + p.z+")").collect(Collectors.joining(","));
+        return "Line: \n" + points.stream().map(p -> "(" + p.x + "," + p.y + "," + p.z + ")").collect(Collectors.joining(","));
     }
 
     public static void hack(List<Line> lines) {
@@ -93,11 +90,11 @@ public class Line {
         for (int i = 0; i < line.points.size(); i++) {
             for (int j = i + 1; j < line.points.size(); j++) {
                 List<Point> connection = new ArrayList<>(numConnections);
-                connection.add(line.points.get(i).deviate(g, count*15));
+                connection.add(line.points.get(i).deviate(g, count * 15));
                 for (int k = 0; k < numConnections - 2; k++) {
-                    connection.add(randomPoints.get(randomIndex++ % numPoints).deviate(g, count*5));
+                    connection.add(randomPoints.get(randomIndex++ % numPoints).deviate(g, count * 5));
                 }
-                connection.add(line.points.get(j).deviate(g, count*15));
+                connection.add(line.points.get(j).deviate(g, count * 15));
                 r.add(new Line(connection));
             }
         }
@@ -105,12 +102,12 @@ public class Line {
     }
 
 
-    public static void scale(List<Line> lines, int maxX, int maxY, int width, int height) {
+    public static void scale(List<Line> lines, int minX, int minY, int maxX, int maxY, int width, int height) {
+
         for (Line l : lines) {
             for (Point p : l.points) {
-                p.x = p.x / maxX * width;
-                p.y = p.y / maxY * height;
-                p.z = p.z / maxX * width;
+                p.x = (p.x - minX) / (maxX - minX) * width;
+                p.y = (p.y - minY) / (maxY - minY) * height;
             }
         }
     }
@@ -132,7 +129,7 @@ public class Line {
         return maxY;
     }
 
-    public void sort(){
-        points.sort((l,r) -> ((Double.compare(l.x,r.x))));
+    public void sort() {
+        points.sort((l, r) -> ((Double.compare(l.x, r.x))));
     }
 }

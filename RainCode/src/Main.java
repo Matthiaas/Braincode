@@ -46,7 +46,7 @@ public class Main extends JPanel {
             lines = parser.parseFiles(files);
         }
 
-        Line.scale(lines, parser.getMaxX(), parser.getMaxY(), width, height);
+        Line.scale(lines, parser.getMinX(), parser.getMinY(), parser.getMaxX(), parser.getMaxY(), width, height);
 
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics g = bufferedImage.getGraphics();

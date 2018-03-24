@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public class CharParser implements Parser {
 
 
-    int maxX = 0 , maxY = 0;
+    int maxX = 0 , maxY = 0, minX = 0, minY = 0;
 
 
     @Override
@@ -41,6 +41,9 @@ public class CharParser implements Parser {
                     currX++;
                     maxX = Integer.max(maxX , currX);
                     maxY = Integer.max(maxY , currY);
+                    minX = Integer.min(minX , currX);
+                    minY = Integer.min(minY , currY);
+
                     lines.get((int) c).add(currX, currY , 0);
             }
         }
@@ -56,6 +59,16 @@ public class CharParser implements Parser {
     @Override
     public int getMaxY() {
         return maxY;
+    }
+
+    @Override
+    public int getMinX() {
+        return minX;
+    }
+
+    @Override
+    public int getMinY() {
+        return minY;
     }
 
 }
