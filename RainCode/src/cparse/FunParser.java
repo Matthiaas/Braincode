@@ -51,7 +51,7 @@ public class FunParser implements Parser {
                 ret.add(findCalls(code));
             }
         }
-        return null;
+        return ret;
     }
 
     private Line findCalls(String code){
