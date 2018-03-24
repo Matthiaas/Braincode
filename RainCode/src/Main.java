@@ -1,5 +1,8 @@
 import Splines.Casteljau;
 import Splines.Interpolator;
+import Splines.Line;
+import cparse.FunParser;
+import cparse.Parser;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +13,7 @@ public class Main extends JPanel {
 
     private BufferedImage bufferedImage;
 
-    public Main(BufferedImage bufferedImage){
+    public Main(BufferedImage bufferedImage) {
         this.bufferedImage = bufferedImage;
     }
 
@@ -22,11 +25,12 @@ public class Main extends JPanel {
         frame.setSize(1920, 1080);
         frame.setLocationRelativeTo(null);
 
-        List<Line> lines = null;
+        Parser test = new FunParser();
+        List<Line> lines = test.parseFile("test.c");
 
         BufferedImage bufferedImage = new BufferedImage(frame.getWidth(), frame.getHeight(), BufferedImage.TYPE_INT_RGB);
 
-        for(Line l: lines){
+        for (Line l : lines) {
             Interpolator interpolator = new Casteljau(l);
         }
 

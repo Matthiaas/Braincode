@@ -1,15 +1,19 @@
+package cparse;
+
+import Splines.Line;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class CharParser  implements  Parser{
-
+/*
     @Override
-    public List<List<Point>> parseString(String code){
+    public List<List<Line>> parseString(String code){
 
         int currX = 0 , currY = 0;
 
-        List<List<Point>> lines = new ArrayList<>(256);
+        List<List<Line>> lines = new ArrayList<>(256);
 
         for(int i = 0; i < lines.size(); i++){
             lines.set(i, new LinkedList<>());
@@ -28,11 +32,12 @@ public class CharParser  implements  Parser{
                     currX += 4;
                     break;
                 default:
-                    Point pos = new Point(currX, currY, 0);
+                    Line pos = new Line(currX, currY, 0);
                     lines.get(c).add(pos);
             }
         }
 
         return lines;
     }
+    */
 }
