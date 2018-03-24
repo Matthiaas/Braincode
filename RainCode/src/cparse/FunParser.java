@@ -63,8 +63,8 @@ public class FunParser implements Parser {
 
         List<String> functions = new LinkedList<String>();
 
-        while(brackets > 0){
-            c = code.charAt(index++);
+        while(brackets > 0 & index<code.length()-1){
+            c = code.charAt(++index);
             if(c == ' '){
                 while (c == ' ') c = code.charAt(index++);
                 if(c == '('){
@@ -110,7 +110,7 @@ public class FunParser implements Parser {
            for (int i = 0; i<n.length(); i++) {
                sum+=n.charAt(i);
            }
-           points.add(sum%primex,sum%primey, primez);
+           points.add(sum%primex,sum%primey, sum%primez);
        }
        return points;
     }
