@@ -14,16 +14,29 @@ public class Line {
         z = new ArrayList<Double>();
     }
 
-    public Double[] getX() {
-        return (Double[]) x.toArray();
+    public double[] getX() {
+        return toPrimitive(x);
     }
 
-    public Double[] getY() {
-        return (Double[]) y.toArray();
+    public double[] getY() {
+        return toPrimitive(y);
     }
 
-    public Double[] getZ() {
-        return (Double[]) z.toArray();
+    public double[] getZ() {
+        return toPrimitive(z);
+    }
+
+    public static double[] toPrimitive(ArrayList<Double> array) {
+        if (array == null) {
+            return null;
+        } else if (array.size() == 0) {
+            return new double[0];
+        }
+        final double[] result = new double[array.size()];
+        for (int i = 0; i < array.size(); i++) {
+            result[i] = array.get(i).doubleValue();
+        }
+        return result;
     }
 
     public void add(double x, double y, double z) {
