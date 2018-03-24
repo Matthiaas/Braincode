@@ -31,17 +31,19 @@ public class Main extends JPanel {
         frame.setSize(1600, 800);
         frame.setLocationRelativeTo(null);
 
-        Parser test = new FunParser();
+        Parser test = new CharParser();
         List<Line> lines = test.parseFile("res/test.c");
-        Line.hack(lines);
+       // Line.hack(lines);
 
         BufferedImage bufferedImage = new BufferedImage(frame.getWidth(), frame.getHeight(), BufferedImage.TYPE_INT_RGB);
         bufferedImage.getGraphics().clearRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
 
         for (int i = 0; i < lines.size(); i++) {
             Line l = lines.get(i);
+            l.setScalerX( 1600.0/test.getMaxX()  );
+            l.setScalerY( 800.0/ test.getMaxY()  );
             System.out.println(l);
-            Interpolator interpolator = new Casteljau(l, frame.getWidth(), frame.getHeight());
+            Interpolator interpolator = new Casteljau(l);
             interpolator.paint(bufferedImage, 0.01, colors[i%colors.length]);
         }
 

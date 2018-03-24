@@ -38,6 +38,7 @@ public class CharParser implements Parser {
                     currX += 4;
                     break;
                 default:
+                    currX++;
                     maxX = Integer.max(maxX , currX);
                     maxY = Integer.max(maxY , currY);
                     lines.get((int) c).add(currX, currY , 0);

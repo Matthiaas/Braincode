@@ -14,6 +14,8 @@ public class Regression extends  Interpolator {
     public Regression(Line l ) {
         super(l);
 
+
+
         double min = Double.MAX_VALUE, max = 0;
         for(double i : l.getX()){
             if(i < min)
