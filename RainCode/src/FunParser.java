@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.*;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,7 +11,7 @@ public class FunParser implements Parser {
     int index = 0;
 
     @Override
-    public List<List<Point>> parseFile(String filename) {
+    public List<Line> parseFile(String filename) {
         try {
             return parseString(new String(Files.readAllBytes(Paths.get(filename))));
         } catch (IOException e) {
@@ -20,8 +21,8 @@ public class FunParser implements Parser {
     }
 
     @Override
-    public List<List<Point>> parseString(String code) {
-        List<List<Point>> ret = new LinkedList<>();
+    public List<Line> parseString(String code) {
+        List<Line> ret = new LinkedList<>();
         code += "\n";
         int length = code.length();
 
@@ -49,7 +50,7 @@ public class FunParser implements Parser {
         return null;
     }
 
-    private List<Point> findCalls(String code){
+    private List<Line> findCalls(String code){
         int brackets = 1;
         String nameBuffer = "";
         char c;
@@ -78,7 +79,7 @@ public class FunParser implements Parser {
             }
         }
         functions.stream().forEach(e -> System.out.println(e));
-        return mapNamesToPoints(functions);
+        return mapNamesToPoints(functions, );
     }
 
     private boolean goodChar(char c){
@@ -96,8 +97,16 @@ public class FunParser implements Parser {
         }
     }
 
-    private List<Point> mapNamesToPoints(List<String> names){
-        return null;
+    private List<Line> mapNamesToPoints(List<String> names, int primex, int primey, int primez){
+        List<Line> points = new ArrayList<Line>();
+        for (String n : names) {
+           int sum = 0;
+           for (int i = 0; i<n.length(); i++) {
+               sum+=n.charAt(i);
+           }
+           points.add(new Line(sum%primex,sum%primey, primez));
+       }
+       return points;
     }
 
 }
