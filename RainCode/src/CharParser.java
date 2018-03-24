@@ -1,19 +1,25 @@
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class CharParser  implements  Parser{
 
 
-    public static void parseStrig(String code){
+    public static List<List<Point>> parseStrig(String code){
 
         int currX = 0 , currY = 0;
 
-        LinkedList<Position>[] lines = new LinkedList[265];
+        List<List<Point>> lines = new ArrayList<>(256);
+
+        for(int i = 0; i < lines.size(); i++){
+            lines.set(i, new LinkedList<>());
+        }
 
         for( int i = 0; i < code.length(); i++){
 
             char c = code.charAt(i);
 
-            switch(c){
+            switch(c) {
                 case '\n':
                     currX = 0;
                     currY++;
@@ -22,14 +28,12 @@ public class CharParser  implements  Parser{
                     currX += 4;
                     break;
                 default:
-                    Position pos = new Position(currX , currY , 0);
-                    
-
+                    Point pos = new Point(currX, currY, 0);
+                    lines.get(c).add(pos);
             }
-
-
-
         }
 
+
+        return lines;
     }
 }
