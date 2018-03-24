@@ -8,10 +8,8 @@ public abstract class Interpolator {
     protected Line l;
     protected int maxX ,  maxY;
 
-    public Interpolator(Line l , int maxX , int maxY) {
+    public Interpolator(Line l ) {
         this.l = l;
-        this.maxX = maxX;
-        this.maxY = maxY;
     }
 
     public abstract double[] evaluate(double t);
