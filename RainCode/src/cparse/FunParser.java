@@ -64,7 +64,7 @@ public class FunParser implements Parser {
         List<String> functions = new LinkedList<String>();
 
         while(brackets > 0){
-            c = code.charAt(++index);
+            c = code.charAt(index++);
             if(c == ' '){
                 while (c == ' ') c = code.charAt(index++);
                 if(c == '('){
