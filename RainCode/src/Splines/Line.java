@@ -9,8 +9,9 @@ public class Line {
 
     private List<Point> points;
 
+
     public void sort() {
-        points.stream().map(r -> r.x).sorted().collect(Collectors.toList());
+        points.sort((l, r) -> ((int) (l.x - r.x)));
     }
 
     public Line() {

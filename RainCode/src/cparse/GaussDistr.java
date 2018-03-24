@@ -16,6 +16,8 @@ public class GaussDistr {
         ret [1] = y + random.nextGaussian()*count;
         ret [2] = z + random.nextGaussian()*count;
 
+
+
         return ret;
     }
 

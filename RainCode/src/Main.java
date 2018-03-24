@@ -35,6 +35,7 @@ public class Main extends JPanel {
         List<Line> lines = parser.parseFile("res/test.c");
         Line.scale(lines, parser.getMaxX(), parser.getMaxY(), frame.getWidth(), frame.getHeight());
 
+
         BufferedImage bufferedImage = new BufferedImage(frame.getWidth(), frame.getHeight(), BufferedImage.TYPE_INT_RGB);
         bufferedImage.getGraphics().clearRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
 
@@ -46,6 +47,7 @@ public class Main extends JPanel {
                 Interpolator interpolator = new Casteljau(splitLines.get(j));
                 interpolator.paint(bufferedImage, 0.01, colors[i % colors.length]);
             }
+
         }
 
         JPanel panel = new Main(bufferedImage);
