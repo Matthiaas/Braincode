@@ -31,7 +31,7 @@ public class Main extends JPanel {
         frame.setSize(1600, 800);
         frame.setLocationRelativeTo(null);
 
-        Parser test = new CharParser();
+        Parser test = new FunParser();
         List<Line> lines = test.parseFile("res/test.c");
        // Line.hack(lines);
 
@@ -43,7 +43,8 @@ public class Main extends JPanel {
             l.setScalerX( 1600.0/test.getMaxX()  );
             l.setScalerY( 800.0/ test.getMaxY()  );
             System.out.println(l);
-            Interpolator interpolator = new Casteljau(l);
+            Interpolator interpolator = new Regression(l);
+            ((Regression )interpolator).maxX = 1600;
             interpolator.paint(bufferedImage, 0.01, colors[i%colors.length]);
         }
 

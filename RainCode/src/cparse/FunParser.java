@@ -27,7 +27,7 @@ import java.util.List;
 public class FunParser implements Parser {
 
     int index = 0;
-
+    GaussDistr gaussDistr = new GaussDistr(1337);
     private int maxX = 0, maxY = 0;
 
     /**
@@ -107,8 +107,11 @@ public class FunParser implements Parser {
                 nameBuffer = "";
             }
         }
-        functions.stream().forEach(e -> System.out.println(e));
+        //System.out.println("------------------------------------------------------");
+        //functions.stream().forEach(e -> System.out.println(e));
+        //System.out.println("------------------------------------------------------");
         return mapNamesToPoints(functions, 761,757,751);
+
     }
 
     private boolean goodChar(char c){
@@ -128,18 +131,19 @@ public class FunParser implements Parser {
 
     private Line mapNamesToPoints(List<String> names, int primex, int primey, int primez){
         Line line = new Line();
+        System.out.println("--------------------------------------------");
         for (String n : names) {
            int sum = 0;
            for (int i = 0; i<n.length(); i++) {
                sum+=n.charAt(i);
            }
-           GaussDistr gaussDistr = new GaussDistr(1337);
+
            long count = names.stream().filter(e -> e.equals(n)).count();
            double[] xyz = gaussDistr.distribute((sum*3)%primex,(sum*17)%primey,(sum*87)%primez,count);
 
             maxX = Math.max(maxX, (int) xyz[0]);
             maxY = Math.max(maxY, (int) xyz[1]);
-
+            //System.out.println(n + "\t\t\tx: " + xyz[0] + "\ty: " + xyz[1] + "\tz: " + xyz[2]);
            line.add(xyz[0],xyz[1],xyz[2]);
        }
        return line;
