@@ -13,14 +13,14 @@ import java.util.List;
 public class FunParser implements Parser {
 
     int index = 0;
-    
+
+    private int maxX = 0, maxY = 0;
 
     @Override
     public List<Line> parseString(String code) {
         List<Line> ret = new ArrayList<Line>();
         code += "\n";
         int length = code.length();
-
 
         for (index = 0; index < length; index++) {
             char c = code.charAt(index);
@@ -41,7 +41,7 @@ public class FunParser implements Parser {
             else if(c == '{'){
                 Line line = findCalls(code);
                 if (line.length()>=4)
-                    ret.add(findCalls(code));
+                    ret.add(line);
             }
         }
         return ret;
@@ -49,12 +49,12 @@ public class FunParser implements Parser {
 
     @Override
     public int getMaxX() {
-        return 0;
+        return maxX;
     }
 
     @Override
     public int getMaxY() {
-        return 0;
+        return maxY;
     }
 
     private Line findCalls(String code){
