@@ -32,7 +32,7 @@ public class Main extends JPanel {
         frame.setLocationRelativeTo(null);
 
         Parser test = new FunParser();
-        List<Line> lines = test.parseFile("res/test.c");
+        List<Line> lines = test.parseFile("res/test2.c");
        // Line.hack(lines);
 
         BufferedImage bufferedImage = new BufferedImage(frame.getWidth(), frame.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -40,11 +40,10 @@ public class Main extends JPanel {
 
         for (int i = 0; i < lines.size(); i++) {
             Line l = lines.get(i);
-            l.setScalerX( 1600.0/test.getMaxX()  );
-            l.setScalerY( 800.0/ test.getMaxY()  );
+            l.setScalerX( bufferedImage.getWidth()/test.getMaxX()  );
+            l.setScalerY( bufferedImage.getHeight()/ test.getMaxY()  );
             System.out.println(l);
             Interpolator interpolator = new Regression(l);
-            ((Regression )interpolator).maxX = 1600;
             interpolator.paint(bufferedImage, 0.01, colors[i%colors.length]);
         }
 

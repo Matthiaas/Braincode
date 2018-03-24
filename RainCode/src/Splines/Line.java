@@ -14,6 +14,24 @@ public class Line {
 
     private double scalerY = 1;
 
+    private double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE , maxX = 0, maxY = 0;
+
+    public double getMinX() {
+        return minX;
+    }
+
+    public double getMinY() {
+        return minY;
+    }
+
+    public double getMaxX() {
+        return maxX;
+    }
+
+    public double getMaxY() {
+        return maxY;
+    }
+
     public void sort(){
        points.sort((l,r) -> ((int)(l.x-r.x)));
     }
@@ -30,6 +48,8 @@ public class Line {
         double[] r = new double[points.size()];
         for (int i = 0; i < points.size(); i++) {
             r[i] = points.get(i).x *scalerX;
+            minX = Double.min(r[i],minX);
+            maxX = Double.max(r[i],maxX);
         }
         return r;
     }
@@ -38,6 +58,8 @@ public class Line {
         double[] r = new double[points.size()];
         for (int i = 0; i < points.size(); i++) {
             r[i] = points.get(i).y  * scalerY;
+            minY = Double.min(r[i],minY);
+            maxY = Double.max(r[i],maxY);
         }
         return r;
     }
