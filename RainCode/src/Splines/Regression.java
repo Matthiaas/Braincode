@@ -9,7 +9,6 @@ public class Regression extends  Interpolator {
     private static final int robust = 1;
     private static final double acc = 0.01;
 
-    public int maxX;
 
     LoessInterpolator interpolator;
     PolynomialSplineFunction fx, fy;
@@ -20,14 +19,6 @@ public class Regression extends  Interpolator {
         System.out.println(l);
 
 
-        double min = Double.MAX_VALUE, max = 0;
-        for(double i : l.getX()){
-            if(i < min)
-                min = i;
-            if(max < i){
-                max = i;
-            }
-        }
         interpolator = new LoessInterpolator(smooth , robust , acc );
         fx = interpolator.interpolate(l.getX() ,l.getY());
         fy = interpolator.interpolate(l.getX() ,l.getZ());
@@ -37,8 +28,8 @@ public class Regression extends  Interpolator {
     @Override
     public double[] evaluate(double t) {
         double[] res = new double[2];
-        res[0] = fx.value(t*maxX*0.90 +57);
-        res[1] = fy.value(t*maxX*0.90 +57 );
+        res[0] = t*(l.getMaxX()-l.getMinX()) +l.getMinX();// fx.value(t*(l.getMaxX()-l.getMinX()) +l.getMinX() );
+        res[1] =  fx.value(t*(l.getMaxX()-l.getMinX()) +l.getMinX());
 
         return res ;
 

@@ -10,9 +10,10 @@ public class Line {
     private List<Point> points;
 
 
-    public void sort() {
-        points.sort((l, r) -> ((int) (l.x - r.x)));
-    }
+
+
+
+    private double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE , maxX = 0, maxY = 0;
 
     public Line() {
         points = new ArrayList<>();
@@ -25,7 +26,12 @@ public class Line {
     public double[] getX() {
         double[] r = new double[points.size()];
         for (int i = 0; i < points.size(); i++) {
+
+            r[i] = points.get(i).x ;
+            minX = Double.min(r[i],minX);
+            maxX = Double.max(r[i],maxX);
             r[i] = points.get(i).x;
+
         }
         return r;
     }
@@ -33,6 +39,9 @@ public class Line {
     public double[] getY() {
         double[] r = new double[points.size()];
         for (int i = 0; i < points.size(); i++) {
+            r[i] = points.get(i).y ;
+            minY = Double.min(r[i],minY);
+            maxY = Double.max(r[i],maxY);
             r[i] = points.get(i).y;
         }
         return r;
@@ -103,4 +112,26 @@ public class Line {
             }
         }
     }
+
+
+    public double getMinX() {
+        return minX;
+    }
+
+    public double getMinY() {
+        return minY;
+    }
+
+    public double getMaxX() {
+        return maxX;
+    }
+
+    public double getMaxY() {
+        return maxY;
+    }
+
+    public void sort(){
+        points.sort((l,r) -> ((int)(l.x-r.x)));
+    }
+
 }
