@@ -12,9 +12,9 @@ public class GaussDistr {
 
     public double[] distribute(double x, double y, double z, long count) {
         double[] ret = new double[3];
-        ret [0] = x + random.nextGaussian()*count;
-        ret [1] = y + random.nextGaussian()*count;
-        ret [2] = z + random.nextGaussian()*count;
+        ret [0] = x + random.nextGaussian()*count/100;
+        ret [1] = y + random.nextGaussian()*count/100;
+        ret [2] = z + random.nextGaussian()*count/100;
 
 
 
