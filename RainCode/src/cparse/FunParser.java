@@ -1,3 +1,5 @@
+package cparse;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -79,7 +81,7 @@ public class FunParser implements Parser {
             }
         }
         functions.stream().forEach(e -> System.out.println(e));
-        return mapNamesToPoints(functions, );
+        return mapNamesToPoints(functions, 761,757,751);
     }
 
     private boolean goodChar(char c){
