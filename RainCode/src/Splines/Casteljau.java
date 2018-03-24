@@ -5,8 +5,8 @@ public class Casteljau extends Interpolator {
     private int n;
     private double[][] b;
 
-    public Casteljau(Line l , int maxX , int maxY) {
-        super(l , maxX , maxY);
+    public Casteljau(Line l ) {
+        super(l );
         this.n = l.getX().length;
         this.b = new double[n][n];
     }

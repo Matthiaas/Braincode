@@ -11,8 +11,8 @@ public class Regression extends  Interpolator {
 
     LoessInterpolator interpolator;
     PolynomialSplineFunction fx, fy;
-    public Regression(Line l , int maxX , int maxY) {
-        super(l , maxX , maxY);
+    public Regression(Line l ) {
+        super(l);
 
         double min = Double.MAX_VALUE, max = 0;
         for(double i : l.getX()){

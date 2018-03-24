@@ -31,8 +31,9 @@ public class Main extends JPanel {
         frame.setSize(1600, 800);
         frame.setLocationRelativeTo(null);
 
-        Parser test = new CharParser();
+        Parser test = new FunParser();
         List<Line> lines = test.parseFile("res/test.c");
+        Line.hack(lines);
 
         BufferedImage bufferedImage = new BufferedImage(frame.getWidth(), frame.getHeight(), BufferedImage.TYPE_INT_RGB);
         bufferedImage.getGraphics().clearRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
@@ -40,8 +41,8 @@ public class Main extends JPanel {
         for (int i = 0; i < lines.size(); i++) {
             Line l = lines.get(i);
             System.out.println(l);
-            Interpolator interpolator = new Casteljau(l);
-            interpolator.paint(bufferedImage, 0.05, colors[i%colors.length]);
+            Interpolator interpolator = new Casteljau(l, frame.getWidth(), frame.getHeight());
+            interpolator.paint(bufferedImage, 0.01, colors[i%colors.length]);
         }
 
         JPanel panel = new Main(bufferedImage);
