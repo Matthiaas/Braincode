@@ -5,15 +5,19 @@ import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
 public class Regression extends  Interpolator {
 
-    private static final double smooth = 0.1;
+    private static final double smooth = 0.5;
     private static final int robust = 1;
     private static final double acc = 0.01;
+
+    public int maxX;
 
     LoessInterpolator interpolator;
     PolynomialSplineFunction fx, fy;
     public Regression(Line l ) {
-        super(l);
 
+        super(l);
+        l.sort();
+        System.out.println(l);
 
 
         double min = Double.MAX_VALUE, max = 0;
@@ -33,8 +37,8 @@ public class Regression extends  Interpolator {
     @Override
     public double[] evaluate(double t) {
         double[] res = new double[2];
-        res[0] = fx.value(t);
-        res[1] = fy.value(t);
+        res[0] = fx.value(t*maxX*0.90 +57);
+        res[1] = fy.value(t*maxX*0.90 +57 );
 
         return res ;
 

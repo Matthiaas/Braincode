@@ -15,7 +15,7 @@ public class Line {
     private double scalerY = 1;
 
     public void sort(){
-        points.stream().map(r -> r.x).sorted().collect(Collectors.toList());
+       points.sort((l,r) -> ((int)(l.x-r.x)));
     }
 
     public Line() {
@@ -67,7 +67,7 @@ public class Line {
     }
 
     public String toString() {
-        return "Line: \n" + points.stream().map(p -> p.x * scalerX + "," + p.y * scalerY + "," + p.z * scalerY).collect(Collectors.joining(","));
+        return "Line: \n" + points.stream().map(p -> "("+ p.x * scalerX + "," + p.y * scalerY + "," + p.z * scalerY+")").collect(Collectors.joining(","));
     }
 
     public static void hack(List<Line> lines) {
