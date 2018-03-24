@@ -7,16 +7,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class CharParser  implements  Parser{
-/*
+
     @Override
-    public List<List<Line>> parseString(String code){
+    public List<Line> parseString(String code){
 
         int currX = 0 , currY = 0;
 
-        List<List<Line>> lines = new ArrayList<>(256);
+        List<Line> lines = new ArrayList<>(256);
 
-        for(int i = 0; i < lines.size(); i++){
-            lines.set(i, new LinkedList<>());
+        for(int i = 0; i < 256 ; i++){
+            lines.add(i, new Line());
         }
 
         for( int i = 0; i < code.length(); i++){
@@ -32,12 +32,12 @@ public class CharParser  implements  Parser{
                     currX += 4;
                     break;
                 default:
-                    Line pos = new Line(currX, currY, 0);
-                    lines.get(c).add(pos);
+                    System.out.println();
+                    lines.get((int)c).add(currX *100, currY*100 , 0);
             }
         }
 
         return lines;
     }
-    */
+
 }
