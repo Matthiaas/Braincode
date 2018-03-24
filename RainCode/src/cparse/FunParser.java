@@ -110,7 +110,7 @@ public class FunParser implements Parser {
            for (int i = 0; i<n.length(); i++) {
                sum+=n.charAt(i);
            }
-           points.add(sum%primex,sum%primey, primez);
+           points.add(sum%primex,sum%primey, sum%primez);
        }
        return points;
     }
