@@ -7,9 +7,12 @@ import cparse.FunParser;
 import cparse.GaussDistr;
 import cparse.Parser;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public class Main extends JPanel {
@@ -17,7 +20,7 @@ public class Main extends JPanel {
     private BufferedImage bufferedImage;
     private static final Color[] colors = new Color[]{new Color(250, 15, 12), new Color(111, 187, 37),
             new Color(253, 95, 0), new Color(31, 66, 151), new Color(230, 35, 137),
-            new Color(46, 172, 192), new Color(250, 245, 35),new Color(234, 232, 43) , new Color(237, 36, 141)};
+            new Color(46, 172, 192), new Color(250, 245, 35), new Color(234, 232, 43), new Color(237, 36, 141)};
 
 
     public Main(BufferedImage bufferedImage) {
@@ -26,6 +29,9 @@ public class Main extends JPanel {
 
     public static void main(String[] args) {
 
+        int width = 3840;
+        int height = 2160;
+
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle("RainCode");
@@ -33,22 +39,32 @@ public class Main extends JPanel {
         frame.setLocationRelativeTo(null);
 
         Parser parser = new FunParser();
-        String[] files = {"res/coreutils/head.c","res/coreutils/tail.c"};
+        String[] files = {"res/test3.c"};
         List<Line> lines = parser.parseFiles(files);
-        Line.scale(lines, parser.getMaxX(), parser.getMaxY(), frame.getWidth(), frame.getHeight());
+        Line.scale(lines, parser.getMaxX(), parser.getMaxY(), width, height);
 
-        BufferedImage bufferedImage = new BufferedImage(frame.getWidth(), frame.getHeight(), BufferedImage.TYPE_INT_RGB);
-        bufferedImage.getGraphics().clearRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
+        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics g = bufferedImage.getGraphics();
+        g.setColor(new Color(26, 25, 25));
+        g.clearRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
 
         System.out.println(lines.size() + " lines");
-        GaussDistr g = new GaussDistr(42);
-        for (int i = 0; i < lines.size(); i++) {
+        GaussDistr gauss = new GaussDistr(42);
+        for (int i = 0; i < lines.size(); i = i + 2) {
             Line longLine = lines.get(i);
-            List<Line> splitLines = Line.betterHack(longLine, frame.getWidth(), frame.getHeight(), 2, 4, lines.size(), g);
-            for (int j = 0; j < splitLines.size(); j++) {
+            List<Line> splitLines = Line.betterHack(longLine, width, height, 2, 4, lines.size(), gauss);
+            for (int j = 0; j < splitLines.size(); j = j + 30) {
                 Interpolator interpolator = new Casteljau(splitLines.get(j));
-                interpolator.paint(bufferedImage, 0.01, colors[i % colors.length]);
+                interpolator.paint(bufferedImage, 0.01, colors[(i * 35 % 17) % colors.length]);
             }
+        }
+
+        String fileName = "res/pics/" + System.currentTimeMillis() + "";
+        File f = new File(fileName + ".png");
+        try {
+            ImageIO.write(bufferedImage, "PNG", f);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         JPanel panel = new Main(bufferedImage);
