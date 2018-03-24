@@ -7,8 +7,22 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
+/**
+ * WARNING!!!!!!!!!!!!!!!!!!!!!!!!!
+ *
+ * this class is toxic,
+ * do not enter without proper supervision!
+ * you WILL break something and I will
+ * track you down, I will find you and swear to god
+ * I WILL MURDER YOU IN YOUR sleep
+ *
+ * kind regards,
+ * fooris
+ */
 
 public class FunParser implements Parser {
 
@@ -16,6 +30,13 @@ public class FunParser implements Parser {
 
     private int maxX = 0, maxY = 0;
 
+    /**
+     *
+     * super magic main method of class
+     *
+     * @param code
+     * @return
+     */
     @Override
     public List<Line> parseString(String code) {
         List<Line> ret = new ArrayList<Line>();
@@ -44,6 +65,7 @@ public class FunParser implements Parser {
                     ret.add(line);
             }
         }
+
         return ret;
     }
 
@@ -114,6 +136,10 @@ public class FunParser implements Parser {
            GaussDistr gaussDistr = new GaussDistr(1337);
            long count = names.stream().filter(e -> e.equals(n)).count();
            double[] xyz = gaussDistr.distribute((sum*3)%primex,(sum*17)%primey,(sum*87)%primez,count);
+
+            maxX = Math.max(maxX, (int) xyz[0]);
+            maxY = Math.max(maxY, (int) xyz[1]);
+
            line.add(xyz[0],xyz[1],xyz[2]);
        }
        return line;
