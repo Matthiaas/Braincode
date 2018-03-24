@@ -5,6 +5,7 @@ import Splines.Line;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 public interface Parser {
@@ -20,6 +21,18 @@ public interface Parser {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public default List<Line> parseFiles(String[] filenames) {
+        List<Line> lines = new ArrayList<>();
+        try {
+            for (String file : filenames)
+            lines.addAll(parseString(new String(Files.readAllBytes(Paths.get(file)))));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return lines;
     }
 
 
