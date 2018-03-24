@@ -13,16 +13,7 @@ import java.util.List;
 public class FunParser implements Parser {
 
     int index = 0;
-
-    @Override
-    public List<Line> parseFile(String filename) {
-        try {
-            return parseString(new String(Files.readAllBytes(Paths.get(filename))));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+    
 
     @Override
     public List<Line> parseString(String code) {

@@ -1,6 +1,7 @@
 import Splines.Casteljau;
 import Splines.Interpolator;
 import Splines.Line;
+import cparse.CharParser;
 import cparse.FunParser;
 import cparse.Parser;
 
@@ -22,10 +23,10 @@ public class Main extends JPanel {
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle("RainCode");
-        frame.setSize(1920, 1080);
+        frame.setSize(1000, 1000);
         frame.setLocationRelativeTo(null);
 
-        Parser test = new FunParser();
+        Parser test = new CharParser();
         List<Line> lines = test.parseFile("res/test.c");
 
         BufferedImage bufferedImage = new BufferedImage(frame.getWidth(), frame.getHeight(), BufferedImage.TYPE_INT_RGB);
