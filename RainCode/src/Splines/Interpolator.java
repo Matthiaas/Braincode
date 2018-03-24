@@ -29,6 +29,10 @@ public abstract class Interpolator {
             g.drawLine(x_old, y_old, x_new, y_new);
         }
 
+        for (int i = 0; i < l.length(); i++) {
+            g.fillRect((int) l.getX()[i], (int) l.getY()[i], 5, 5);
+        }
+
         return bufferedImage;
     }
 
