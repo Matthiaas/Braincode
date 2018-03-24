@@ -22,5 +22,9 @@ public interface Parser {
         }
     }
 
+
+    public int getMaxX();
+    public int getMaxY();
+
 }
 

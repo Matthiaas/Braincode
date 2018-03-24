@@ -10,6 +10,10 @@ import java.util.stream.Collectors;
 
 public class CharParser implements Parser {
 
+
+    int maxX = 0 , maxY = 0;
+
+
     @Override
     public List<Line> parseString(String code) {
 
@@ -34,12 +38,23 @@ public class CharParser implements Parser {
                     currX += 4;
                     break;
                 default:
-                    System.out.println();
-                    lines.get((int) c).add(currX * 100, currY * 100, 0);
+                    maxX = Integer.max(maxX , currX);
+                    maxY = Integer.max(maxY , currY);
+                    lines.get((int) c).add(currX, currY , 0);
             }
         }
 
         return lines.stream().filter(l -> l.length() > 4).collect(Collectors.toList());
+    }
+
+    @Override
+    public int getMaxX() {
+        return maxX;
+    }
+
+    @Override
+    public int getMaxY() {
+        return maxY;
     }
 
 }
