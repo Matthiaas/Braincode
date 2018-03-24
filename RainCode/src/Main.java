@@ -31,7 +31,7 @@ public class Main extends JPanel {
         frame.setSize(1600, 800);
         frame.setLocationRelativeTo(null);
 
-        Parser test = new FunParser();
+        Parser test = new CharParser();
         List<Line> lines = test.parseFile("res/test.c");
 
         BufferedImage bufferedImage = new BufferedImage(frame.getWidth(), frame.getHeight(), BufferedImage.TYPE_INT_RGB);
