@@ -31,7 +31,7 @@ public class Main extends JPanel {
         frame.setSize(1600, 800);
         frame.setLocationRelativeTo(null);
 
-        Parser parser = new CharParser();
+        Parser parser = new FunParser();
         List<Line> lines = parser.parseFile("res/test.c");
         Line.scale(lines, parser.getMaxX(), parser.getMaxY(), frame.getWidth(), frame.getHeight());
 
@@ -40,10 +40,10 @@ public class Main extends JPanel {
         bufferedImage.getGraphics().clearRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
 
         System.out.println(lines.size() + " lines");
-        for (int i = 0; i < lines.size(); i = i+13) {
+        for (int i = 0; i < lines.size(); i++) {
             Line longLine = lines.get(i);
             List<Line> splitLines = Line.betterHack(longLine, frame.getWidth(), frame.getHeight(), 2, 4);
-            for (int j = 0; j < splitLines.size(); j=j+602) {
+            for (int j = 0; j < splitLines.size(); j++) {
                 Interpolator interpolator = new Casteljau(splitLines.get(j));
                 interpolator.paint(bufferedImage, 0.01, colors[i % colors.length]);
             }
