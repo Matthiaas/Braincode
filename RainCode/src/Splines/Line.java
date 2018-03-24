@@ -44,4 +44,8 @@ public class Line {
         this.y.add(y);
         this.z.add(z);
     }
+
+    public int length() {
+        return x.size();
+    }
 }

@@ -48,7 +48,9 @@ public class FunParser implements Parser {
                 }
             }
             else if(c == '{'){
-                ret.add(findCalls(code));
+                Line line = findCalls(code);
+                if (line.length()>=4)
+                    ret.add(findCalls(code));
             }
         }
         return ret;
