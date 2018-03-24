@@ -1,9 +1,23 @@
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.*;
 import java.util.LinkedList;
 import java.util.List;
 
 public class FunParser implements Parser {
 
     int index = 0;
+
+    @Override
+    public List<List<Point>> parseFile(String filename) {
+        try {
+            return parseString(new String(Files.readAllBytes(Paths.get(filename))));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     @Override
     public List<List<Point>> parseString(String code) {
@@ -63,6 +77,7 @@ public class FunParser implements Parser {
                 nameBuffer = "";
             }
         }
+        functions.stream().forEach(e -> System.out.println(e));
         return mapNamesToPoints(functions);
     }
 

@@ -6,7 +6,7 @@ public interface Parser {
         throw  new RuntimeException("Not Implemented yet");
     }
 
-    public default List<List<Point>> parseFile(String filname){
+    public default List<List<Point>> parseFile(String filename){
         throw  new RuntimeException("Not Implemented yet");
     }
 
