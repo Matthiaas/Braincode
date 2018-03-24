@@ -1,5 +1,7 @@
 package cparse;
 
+import Splines.Line;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -24,7 +26,7 @@ public class FunParser implements Parser {
 
     @Override
     public List<Line> parseString(String code) {
-        List<Line> ret = new LinkedList<>();
+        List<Line> ret = new ArrayList<Line>();
         code += "\n";
         int length = code.length();
 
@@ -52,7 +54,7 @@ public class FunParser implements Parser {
         return null;
     }
 
-    private List<Line> findCalls(String code){
+    private Line findCalls(String code){
         int brackets = 1;
         String nameBuffer = "";
         char c;
@@ -99,14 +101,14 @@ public class FunParser implements Parser {
         }
     }
 
-    private List<Line> mapNamesToPoints(List<String> names, int primex, int primey, int primez){
-        List<Line> points = new ArrayList<Line>();
+    private Line mapNamesToPoints(List<String> names, int primex, int primey, int primez){
+        Line points = new Line();
         for (String n : names) {
            int sum = 0;
            for (int i = 0; i<n.length(); i++) {
                sum+=n.charAt(i);
            }
-           points.add(new Line(sum%primex,sum%primey, primez));
+           points.add(sum%primex,sum%primey, primez);
        }
        return points;
     }

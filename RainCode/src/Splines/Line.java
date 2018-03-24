@@ -1,26 +1,34 @@
 package Splines;
 
+import java.util.ArrayList;
+
 public class Line {
 
-    private double[] x;
-    private double[] y;
-    private double[] z;
+    private ArrayList<Double> x;
+    private ArrayList<Double> y;
+    private ArrayList<Double> z;
 
-    public Line(double[] x, double[] y, double[] z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+    public Line() {
+        x = new ArrayList<Double>();
+        y = new ArrayList<Double>();
+        z = new ArrayList<Double>();
     }
 
-    public double[] getX() {
-        return x;
+    public Double[] getX() {
+        return (Double[]) x.toArray();
     }
 
-    public double[] getY() {
-        return y;
+    public Double[] getY() {
+        return (Double[]) y.toArray();
     }
 
-    public double[] getZ() {
-        return z;
+    public Double[] getZ() {
+        return (Double[]) z.toArray();
+    }
+
+    public void add(double x, double y, double z) {
+        this.x.add(x);
+        this.y.add(y);
+        this.z.add(z);
     }
 }

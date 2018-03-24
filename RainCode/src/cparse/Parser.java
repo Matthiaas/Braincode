@@ -1,5 +1,6 @@
 package cparse;
 
+import Splines.Line;
 import java.util.List;
 
 public interface Parser {
