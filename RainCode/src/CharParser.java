@@ -4,8 +4,8 @@ import java.util.List;
 
 public class CharParser  implements  Parser{
 
-
-    public static List<List<Point>> parseStrig(String code){
+    @Override
+    public List<List<Point>> parseString(String code){
 
         int currX = 0 , currY = 0;
 
