@@ -1,5 +1,7 @@
 package Splines;
 
+import cparse.GaussDistr;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -79,23 +81,23 @@ public class Line {
         }
     }
 
-    public static List<Line> betterHack(Line line, int width, int height, int numPoints, int numConnections) {
+    public static List<Line> betterHack(Line line, int width, int height, int numPoints, int numConnections, int count, GaussDistr g) {
         List<Line> r = new ArrayList<>();
 
         List<Point> randomPoints = new ArrayList<>(numPoints);
         for (int i = 0; i < numPoints; i++) {
-            randomPoints.add(new Point(Math.random() * width, Math.random() * height, Math.random() * height));
+            randomPoints.add(new Point(Math.random() * width * 0.7 + width * 0.15, Math.random() * height * 0.7 + height * 0.15, Math.random() * height));
         }
 
         int randomIndex = 0;
         for (int i = 0; i < line.points.size(); i++) {
             for (int j = i + 1; j < line.points.size(); j++) {
                 List<Point> connection = new ArrayList<>(numConnections);
-                connection.add(line.points.get(i));
+                connection.add(line.points.get(i).deviate(g, count*15));
                 for (int k = 0; k < numConnections - 2; k++) {
-                    connection.add(randomPoints.get(randomIndex++ % numPoints));
+                    connection.add(randomPoints.get(randomIndex++ % numPoints).deviate(g, count*5));
                 }
-                connection.add(line.points.get(j));
+                connection.add(line.points.get(j).deviate(g, count*15));
                 r.add(new Line(connection));
             }
         }

@@ -4,6 +4,7 @@ import Splines.Line;
 import Splines.Regression;
 import cparse.CharParser;
 import cparse.FunParser;
+import cparse.GaussDistr;
 import cparse.Parser;
 
 import javax.swing.*;
@@ -15,8 +16,8 @@ public class Main extends JPanel {
 
     private BufferedImage bufferedImage;
     private static final Color[] colors = new Color[]{new Color(250, 15, 12), new Color(111, 187, 37),
-            new Color(234, 232, 43), new Color(31, 66, 151), new Color(230, 35, 137),
-            new Color(46, 172, 192), new Color(250, 245, 35), new Color(237, 36, 141)};
+            new Color(253, 95, 0), new Color(31, 66, 151), new Color(230, 35, 137),
+            new Color(46, 172, 192), new Color(250, 245, 35),new Color(234, 232, 43) , new Color(237, 36, 141)};
 
 
     public Main(BufferedImage bufferedImage) {
@@ -39,9 +40,10 @@ public class Main extends JPanel {
         bufferedImage.getGraphics().clearRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
 
         System.out.println(lines.size() + " lines");
+        GaussDistr g = new GaussDistr(42);
         for (int i = 0; i < lines.size(); i++) {
             Line longLine = lines.get(i);
-            List<Line> splitLines = Line.betterHack(longLine, frame.getWidth(), frame.getHeight(), 2, 4);
+            List<Line> splitLines = Line.betterHack(longLine, frame.getWidth(), frame.getHeight(), 2, 4, lines.size(), g);
             for (int j = 0; j < splitLines.size(); j++) {
                 Interpolator interpolator = new Casteljau(splitLines.get(j));
                 interpolator.paint(bufferedImage, 0.01, colors[i % colors.length]);
