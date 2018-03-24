@@ -103,7 +103,7 @@ public class FunParser implements Parser {
            }
            GaussDistr gaussDistr = new GaussDistr(1337);
            long count = names.stream().filter(e -> e.equals(n)).count();
-           double[] xyz = gaussDistr.distribute(sum%primex,sum%primey,sum%primez,count);
+           double[] xyz = gaussDistr.distribute((sum*3)%primex,(sum*17)%primey,(sum*87)%primez,count);
            line.add(xyz[0],xyz[1],xyz[2]);
        }
        return line;
