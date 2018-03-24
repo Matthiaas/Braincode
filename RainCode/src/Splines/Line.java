@@ -83,7 +83,7 @@ public class Line {
 
         List<Point> randomPoints = new ArrayList<>(numPoints);
         for (int i = 0; i < numPoints; i++) {
-            randomPoints.add(new Point(Math.random() * width * 0.7 + width * 0.15, Math.random() * height * 0.7 + height * 0.15, Math.random() * height));
+            randomPoints.add(new Point(Math.random() * width, Math.random() * height, Math.random() * height));
         }
 
         int randomIndex = 0;
@@ -106,8 +106,8 @@ public class Line {
 
         for (Line l : lines) {
             for (Point p : l.points) {
-                p.x = (p.x - minX) / (maxX - minX) * width;
-                p.y = (p.y - minY) / (maxY - minY) * height;
+                p.x = 0.05 * width + ((p.x - minX) / (maxX - minX)) * 0.85 * width;
+                p.y = 0.05 * height + ((p.y - minY) / (maxY - minY)) * 0.85 * height;
             }
         }
     }
