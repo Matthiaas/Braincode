@@ -1,19 +1,19 @@
 package Splines;
 
-public class Casteljau extends Interpolation{
+public class Casteljau extends Interpolator {
 
     private int n;
     private double[][] b;
 
-    public Casteljau(double[] x, double[] y, int n) {
-        super(x,y);
-        this.n = x.length;
+    public Casteljau(Line l) {
+        super(l);
+        this.n = l.getX().length;
         this.b = new double[n][n];
     }
 
     public double[] evaluate(double t) {
-        double xVal = evaluate(t, x);
-        double yVal = evaluate(t, y);
+        double xVal = evaluate(t, l.getX());
+        double yVal = evaluate(t, l.getY());
         return new double[]{xVal, yVal};
     }
 
