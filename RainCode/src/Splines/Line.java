@@ -5,54 +5,45 @@ import java.util.stream.Collectors;
 
 public class Line {
 
-    private ArrayList<Double> x;
-    private ArrayList<Double> y;
-    private ArrayList<Double> z;
+    private ArrayList<Point> points;
 
     public Line() {
-        x = new ArrayList<Double>();
-        y = new ArrayList<Double>();
-        z = new ArrayList<Double>();
+        points = new ArrayList<>();
     }
 
     public double[] getX() {
-        return toPrimitive(x);
+        double[] r = new double[points.size()];
+        for (int i = 0; i < points.size(); i++) {
+            r[i] = points.get(i).x;
+        }
+        return r;
     }
 
     public double[] getY() {
-        return toPrimitive(y);
+        double[] r = new double[points.size()];
+        for (int i = 0; i < points.size(); i++) {
+            r[i] = points.get(i).y;
+        }
+        return r;
     }
 
     public double[] getZ() {
-        return toPrimitive(z);
-    }
-
-    public static double[] toPrimitive(ArrayList<Double> array) {
-        if (array == null) {
-            return null;
-        } else if (array.size() == 0) {
-            return new double[0];
+        double[] r = new double[points.size()];
+        for (int i = 0; i < points.size(); i++) {
+            r[i] = points.get(i).z;
         }
-        final double[] result = new double[array.size()];
-        for (int i = 0; i < array.size(); i++) {
-            result[i] = array.get(i).doubleValue();
-        }
-        return result;
+        return r;
     }
 
     public void add(double x, double y, double z) {
-        this.x.add(x);
-        this.y.add(y);
-        this.z.add(z);
+        points.add(new Point(x, y, z));
     }
 
     public int length() {
-        return x.size();
+        return points.size();
     }
 
     public String toString() {
-        return "Line: \n" + x.stream().map(d -> d.intValue() + "").collect(Collectors.joining(",")) + "\n" +
-                y.stream().map(d -> d.intValue() + "").collect(Collectors.joining(",")) + "\n" +
-                z.stream().map(d -> d.intValue() + "").collect(Collectors.joining(","));
+        return "Line: \n" + points.stream().map(p -> p.x + "," + p.y + "," + p.z).collect(Collectors.joining(","));
     }
 }
