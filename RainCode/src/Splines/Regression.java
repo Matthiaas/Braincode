@@ -17,7 +17,7 @@ public class Regression extends  Interpolator {
         super(l);
         l.sort();
         System.out.println(l);
-
+        System.out.println("HELP!!!");
 
         interpolator = new LoessInterpolator(smooth , robust , acc );
         fx = interpolator.interpolate(l.getX() ,l.getY());

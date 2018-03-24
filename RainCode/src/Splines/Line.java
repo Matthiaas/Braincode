@@ -64,7 +64,7 @@ public class Line {
     }
 
     public String toString() {
-        return "Line: \n" + points.stream().map(p -> p.x + "," + p.y + "," + p.z).collect(Collectors.joining(","));
+        return "Line: \n" + points.stream().map(p -> "("+p.x + "," + p.y + "," + p.z+")").collect(Collectors.joining(","));
     }
 
     public static void hack(List<Line> lines) {
@@ -131,7 +131,6 @@ public class Line {
     }
 
     public void sort(){
-        points.sort((l,r) -> ((int)(l.x-r.x)));
+        points.sort((l,r) -> ((Double.compare(l.x,r.x))));
     }
-
 }
