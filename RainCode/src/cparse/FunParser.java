@@ -144,7 +144,8 @@ public class FunParser implements Parser {
             maxX = Math.max(maxX, (int) xyz[0]);
             maxY = Math.max(maxY, (int) xyz[1]);
             //System.out.println(n + "\t\t\tx: " + xyz[0] + "\ty: " + xyz[1] + "\tz: " + xyz[2]);
-           line.add(xyz[0] < 0 ? 0 : xyz[0] ,xyz[1] < 0 ? 0 : xyz[1], xyz[2] < 0 ? 0 : xyz[2]);
+
+           line.add(Math.abs(xyz[0]) ,Math.abs(xyz[1]), Math.abs(xyz[2]));
        }
        return line;
     }
