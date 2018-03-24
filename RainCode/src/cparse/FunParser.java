@@ -26,6 +26,9 @@ import java.util.List;
 
 public class FunParser implements Parser {
 
+    public static final int PRIMEX = 34703, PRIMEY = 24421, PRIMEZ = 43037;
+
+
     int index = 0;
     GaussDistr gaussDistr = new GaussDistr(1337);
     private int maxX = 0, maxY = 0;
@@ -110,9 +113,10 @@ public class FunParser implements Parser {
         System.out.println("------------------------------------------------------");
         functions.stream().forEach(e -> System.out.println(e));
         System.out.println("------------------------------------------------------");
-        return mapNamesToPoints(functions, 761,757,751);
+        return mapNamesToPoints(functions, PRIMEX,PRIMEY,PRIMEZ);
 
     }
+
 
     private boolean goodChar(char c){
         return (c >= 'a') && (c <= 'z') || (c >= 'A') && (c <= 'Z') || (c == '_');
@@ -133,13 +137,11 @@ public class FunParser implements Parser {
         Line line = new Line();
         System.out.println("--------------------------------------------");
         for (String n : names) {
-           int sum = 0;
-           for (int i = 0; i<n.length(); i++) {
-               sum+=n.charAt(i);
-           }
+           int sum = n.hashCode();
 
            long count = names.stream().filter(e -> e.equals(n)).count();
-           double[] xyz = gaussDistr.distribute((sum*3)%primex,(sum*17)%primey,(sum*87)%primez,count);
+           sum++;
+           double[] xyz = gaussDistr.distribute((sum*235723l)%primex,(sum*238477l)%primey,(sum*424234l)%primez,count);
 
             maxX = Math.max(maxX, (int) xyz[0]);
             maxY = Math.max(maxY, (int) xyz[1]);

@@ -3,6 +3,7 @@ import Splines.Interpolator;
 import Splines.Line;
 import Splines.Regression;
 import cparse.FunParser;
+import cparse.GaussDistr;
 import cparse.Parser;
 
 import javax.swing.*;
@@ -27,23 +28,29 @@ public class MatzesRegressionMain extends JPanel {
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle("RainCode");
-        frame.setSize(1600, 800);
+        frame.setSize(2000, 800);
         frame.setLocationRelativeTo(null);
 
         Parser parser = new FunParser();
-        List<Line> lines = parser.parseFile("res/test3.c");
+        List<Line> lines = parser.parseFile("res/test6.c");
         Line.scale(lines, parser.getMaxX(), parser.getMaxY(), frame.getWidth(), frame.getHeight());
+
+        System.out.println("THIS:"+parser.getMaxX());
 
         BufferedImage bufferedImage = new BufferedImage(frame.getWidth(), frame.getHeight(), BufferedImage.TYPE_INT_RGB);
         bufferedImage.getGraphics().clearRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
 
+        int cc = 0;
         System.out.println(lines.size() + " lines");
-        for (int i = 0; i < lines.size(); i++) {
+        GaussDistr g = new GaussDistr(42);
+        for (int i = 0; i < lines.size(); i+= 1) {
             Line longLine = lines.get(i);
-
-            Interpolator interpolator = new Regression(longLine);
-            interpolator.paint(bufferedImage, 0.001, colors[i % colors.length]);
-
+            List<Line> splitLines = Line.betterHack(longLine, frame.getWidth(), frame.getHeight(), 2, 2, lines.size(), g);
+            //for (int j = 0; j < splitLines.size(); j+= 10) {
+                Interpolator interpolator = new Casteljau(lines.get(i));
+                interpolator.paint(bufferedImage, 0.01, colors[cc % colors.length]);
+            //}
+            //cc++;
         }
 
         JPanel panel = new MatzesRegressionMain(bufferedImage);
