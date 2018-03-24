@@ -8,13 +8,8 @@ import java.util.stream.Collectors;
 public class Line {
 
     private List<Point> points;
-    private double scalerX = 1;
 
-
-
-    private double scalerY = 1;
-
-    public void sort(){
+    public void sort() {
         points.stream().map(r -> r.x).sorted().collect(Collectors.toList());
     }
 
@@ -29,7 +24,7 @@ public class Line {
     public double[] getX() {
         double[] r = new double[points.size()];
         for (int i = 0; i < points.size(); i++) {
-            r[i] = points.get(i).x *scalerX;
+            r[i] = points.get(i).x;
         }
         return r;
     }
@@ -37,7 +32,7 @@ public class Line {
     public double[] getY() {
         double[] r = new double[points.size()];
         for (int i = 0; i < points.size(); i++) {
-            r[i] = points.get(i).y  * scalerY;
+            r[i] = points.get(i).y;
         }
         return r;
     }
@@ -45,7 +40,7 @@ public class Line {
     public double[] getZ() {
         double[] r = new double[points.size()];
         for (int i = 0; i < points.size(); i++) {
-            r[i] = points.get(i).z  * scalerX;
+            r[i] = points.get(i).z;
         }
         return r;
     }
@@ -58,16 +53,8 @@ public class Line {
         return points.size();
     }
 
-    public void setScalerX(double scalerX) {
-        this.scalerX = scalerX;
-    }
-
-    public void setScalerY(double scalerY) {
-        this.scalerY = scalerY;
-    }
-
     public String toString() {
-        return "Line: \n" + points.stream().map(p -> p.x * scalerX + "," + p.y * scalerY + "," + p.z * scalerY).collect(Collectors.joining(","));
+        return "Line: \n" + points.stream().map(p -> p.x + "," + p.y + "," + p.z).collect(Collectors.joining(","));
     }
 
     public static void hack(List<Line> lines) {
@@ -78,6 +65,40 @@ public class Line {
                 lines.remove(i);
                 lines.add(new Line(l.points.subList(0, 4)));
                 lines.add(new Line(l.points.subList(4, l.points.size())));
+            }
+        }
+    }
+
+    public static List<Line> betterHack(Line line, int width, int height, int numPoints, int numConnections) {
+        List<Line> r = new ArrayList<>();
+
+        List<Point> randomPoints = new ArrayList<>(numPoints);
+        for (int i = 0; i < numPoints; i++) {
+            randomPoints.add(new Point(Math.random() * width, Math.random() * height, Math.random() * height));
+        }
+
+        int randomIndex = 0;
+        for (int i = 0; i < line.points.size(); i++) {
+            for (int j = i + 1; j < line.points.size(); j++) {
+                List<Point> connection = new ArrayList<>(numConnections);
+                connection.add(line.points.get(i));
+                for (int k = 0; k < numConnections - 2; k++) {
+                    connection.add(randomPoints.get(randomIndex++ % numPoints));
+                }
+                connection.add(line.points.get(j));
+                r.add(new Line(connection));
+            }
+        }
+        return r;
+    }
+
+
+    public static void scale(List<Line> lines, int maxX, int maxY, int width, int height) {
+        for (Line l : lines) {
+            for (Point p : l.points) {
+                p.x = p.x / maxX * width;
+                p.y = p.y / maxY * height;
+                p.z = p.z / maxX * width;
             }
         }
     }

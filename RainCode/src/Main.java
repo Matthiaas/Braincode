@@ -31,20 +31,21 @@ public class Main extends JPanel {
         frame.setSize(1600, 800);
         frame.setLocationRelativeTo(null);
 
-        Parser test = new CharParser();
-        List<Line> lines = test.parseFile("res/test.c");
-       // Line.hack(lines);
+        Parser parser = new CharParser();
+        List<Line> lines = parser.parseFile("res/test.c");
+        Line.scale(lines, parser.getMaxX(), parser.getMaxY(), frame.getWidth(), frame.getHeight());
 
         BufferedImage bufferedImage = new BufferedImage(frame.getWidth(), frame.getHeight(), BufferedImage.TYPE_INT_RGB);
         bufferedImage.getGraphics().clearRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
 
-        for (int i = 0; i < lines.size(); i++) {
-            Line l = lines.get(i);
-            l.setScalerX( 1600.0/test.getMaxX()  );
-            l.setScalerY( 800.0/ test.getMaxY()  );
-            System.out.println(l);
-            Interpolator interpolator = new Casteljau(l);
-            interpolator.paint(bufferedImage, 0.01, colors[i%colors.length]);
+        System.out.println(lines.size() + " lines");
+        for (int i = 0; i < lines.size(); i = i+13) {
+            Line longLine = lines.get(i);
+            List<Line> splitLines = Line.betterHack(longLine, frame.getWidth(), frame.getHeight(), 2, 4);
+            for (int j = 0; j < splitLines.size(); j=j+602) {
+                Interpolator interpolator = new Casteljau(splitLines.get(j));
+                interpolator.paint(bufferedImage, 0.01, colors[i % colors.length]);
+            }
         }
 
         JPanel panel = new Main(bufferedImage);
