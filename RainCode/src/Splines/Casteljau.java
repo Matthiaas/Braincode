@@ -17,7 +17,7 @@ public class Casteljau extends Interpolator {
         return new double[]{xVal, yVal};
     }
 
-    private double evaluate(double t, double[] initialValues) {
+    private double evaluate(double t, Double[] initialValues) {
         for (int i = 0; i < n; i++) {
             b[0][i] = initialValues[i];
         }
