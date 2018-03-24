@@ -1,6 +1,7 @@
 package Splines;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class Line {
 
@@ -47,5 +48,11 @@ public class Line {
 
     public int length() {
         return x.size();
+    }
+
+    public String toString() {
+        return "Line: \n" + x.stream().map(d -> d.intValue() + "").collect(Collectors.joining(",")) + "\n" +
+                y.stream().map(d -> d.intValue() + "").collect(Collectors.joining(",")) + "\n" +
+                z.stream().map(d -> d.intValue() + "").collect(Collectors.joining(","));
     }
 }
