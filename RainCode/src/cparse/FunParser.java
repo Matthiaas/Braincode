@@ -95,15 +95,18 @@ public class FunParser implements Parser {
     }
 
     private Line mapNamesToPoints(List<String> names, int primex, int primey, int primez){
-        Line points = new Line();
+        Line line = new Line();
         for (String n : names) {
            int sum = 0;
            for (int i = 0; i<n.length(); i++) {
                sum+=n.charAt(i);
            }
-           points.add(sum%primex,sum%primey, sum%primez);
+           GaussDistr gaussDistr = new GaussDistr(1337);
+           long count = names.stream().filter(e -> e.equals(n)).count();
+           double[] xyz = gaussDistr.distribute(sum%primex,sum%primey,sum%primez,count);
+           line.add(xyz[0],xyz[1],xyz[2]);
        }
-       return points;
+       return line;
     }
 
 }

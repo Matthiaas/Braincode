@@ -13,8 +13,9 @@ public abstract class Interpolator {
 
     public abstract double[] evaluate(double t);
 
-    public BufferedImage paint(BufferedImage bufferedImage, double resolution) {
+    public BufferedImage paint(BufferedImage bufferedImage, double resolution, Color c) {
         Graphics g = bufferedImage.getGraphics();
+        g.setColor(c);
 
         int x_old = (int) l.getX()[0];
         int y_old = (int) l.getY()[0];

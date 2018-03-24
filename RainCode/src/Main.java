@@ -14,7 +14,7 @@ import java.util.List;
 public class Main extends JPanel {
 
     private BufferedImage bufferedImage;
-    private final Color[] colors = new Color[]{new Color(250, 15, 12), new Color(111, 187, 37),
+    private static final Color[] colors = new Color[]{new Color(250, 15, 12), new Color(111, 187, 37),
             new Color(234, 232, 43), new Color(31, 66, 151), new Color(230, 35, 137),
             new Color(46, 172, 192), new Color(250, 245, 35), new Color(237, 36, 141)};
 
@@ -37,10 +37,11 @@ public class Main extends JPanel {
         BufferedImage bufferedImage = new BufferedImage(frame.getWidth(), frame.getHeight(), BufferedImage.TYPE_INT_RGB);
         bufferedImage.getGraphics().clearRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
 
-        for (Line l : lines) {
+        for (int i = 0; i < lines.size(); i++) {
+            Line l = lines.get(i);
             System.out.println(l);
             Interpolator interpolator = new Casteljau(l);
-            interpolator.paint(bufferedImage, 0.05);
+            interpolator.paint(bufferedImage, 0.05, colors[i]);
         }
 
         JPanel panel = new Main(bufferedImage);
@@ -56,6 +57,5 @@ public class Main extends JPanel {
         g.clearRect(0, 0, this.getWidth(), this.getHeight());
         g.drawImage(bufferedImage, 0, 0, null);
     }
-
 
 }
