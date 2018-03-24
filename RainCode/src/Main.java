@@ -28,19 +28,24 @@ public class Main extends JPanel {
     }
 
     public static void main(String[] args) {
+        boolean server = args.length == 2;
+
 
         int width = 3840;
         int height = 2160;
 
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setTitle("RainCode");
-        frame.setSize(1600, 800);
-        frame.setLocationRelativeTo(null);
 
         Parser parser = new FunParser();
-        String[] files = {"res/test3.c"};
-        List<Line> lines = parser.parseFiles(files);
+
+        List<Line> lines;
+        if (server) {
+            String[] files = {args[0]};
+            lines = parser.parseFiles(files);
+        } else {
+            String[] files = {"res/test3.c"};
+            lines = parser.parseFiles(files);
+        }
+
         Line.scale(lines, parser.getMaxX(), parser.getMaxY(), width, height);
 
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -59,21 +64,37 @@ public class Main extends JPanel {
             }
         }
 
-        String fileName = "res/pics/" + System.currentTimeMillis() + "";
-        File f = new File(fileName + ".png");
-        try {
-            ImageIO.write(bufferedImage, "PNG", f);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (server) {
+            String fileName = "out/" + args[1];
+            File f = new File(fileName);
+            try {
+                ImageIO.write(bufferedImage, "PNG", f);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            JFrame frame = new JFrame();
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setTitle("RainCode");
+            frame.setSize(1600, 800);
+            frame.setLocationRelativeTo(null);
+
+            String fileName = "res/pics/" + System.currentTimeMillis() + "";
+            File f = new File(fileName + ".png");
+            try {
+                ImageIO.write(bufferedImage, "PNG", f);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            JPanel panel = new Main(bufferedImage);
+            frame.add(panel);
+
+            frame.setVisible(true);
+            panel.setVisible(true);
+
+            panel.repaint();
         }
-
-        JPanel panel = new Main(bufferedImage);
-        frame.add(panel);
-
-        frame.setVisible(true);
-        panel.setVisible(true);
-
-        panel.repaint();
     }
 
     public void paint(Graphics g) {
