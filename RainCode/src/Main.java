@@ -41,7 +41,7 @@ public class Main extends JPanel {
             Line l = lines.get(i);
             System.out.println(l);
             Interpolator interpolator = new Casteljau(l);
-            interpolator.paint(bufferedImage, 0.05, colors[i]);
+            interpolator.paint(bufferedImage, 0.05, colors[i%colors.length]);
         }
 
         JPanel panel = new Main(bufferedImage);

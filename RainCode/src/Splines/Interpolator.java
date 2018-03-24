@@ -6,9 +6,12 @@ import java.awt.image.BufferedImage;
 public abstract class Interpolator {
 
     protected Line l;
+    protected int maxX ,  maxY;
 
-    public Interpolator(Line l) {
+    public Interpolator(Line l , int maxX , int maxY) {
         this.l = l;
+        this.maxX = maxX;
+        this.maxY = maxY;
     }
 
     public abstract double[] evaluate(double t);
