@@ -33,7 +33,6 @@ public class CharParser  implements  Parser{
             }
         }
 
-
         return lines;
     }
 }
