@@ -47,6 +47,16 @@ public class FunParser implements Parser {
         return ret;
     }
 
+    @Override
+    public int getMaxX() {
+        return 0;
+    }
+
+    @Override
+    public int getMaxY() {
+        return 0;
+    }
+
     private Line findCalls(String code){
         int brackets = 1;
         String nameBuffer = "";
