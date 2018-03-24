@@ -6,9 +6,9 @@ import java.awt.image.BufferedImage;
 public abstract class Interpolator {
 
     protected Line l;
-    protected int maxX ,  maxY;
+    protected int maxX, maxY;
 
-    public Interpolator(Line l , int maxX , int maxY) {
+    public Interpolator(Line l, int maxX, int maxY) {
         this.l = l;
         this.maxX = maxX;
         this.maxY = maxY;
@@ -20,20 +20,22 @@ public abstract class Interpolator {
         Graphics g = bufferedImage.getGraphics();
         g.setColor(c);
 
-        int x_old = (int) l.getX()[0];
-        int y_old = (int) l.getY()[0];
-        int x_new = 0;
-        int y_new = 0;
+        int x_old;
+        int y_old;
+        int x_new = (int) l.getX()[0];
+        int y_new = (int) l.getY()[0];
 
         for (double t = 0; t <= 1; t += resolution) {
             double xy[] = this.evaluate(t);
+            x_old = x_new;
+            y_old = y_new;
             x_new = (int) xy[0];
             y_new = (int) xy[1];
             g.drawLine(x_old, y_old, x_new, y_new);
         }
 
         for (int i = 0; i < l.length(); i++) {
-            g.fillRect((int) l.getX()[i], (int) l.getY()[i], 5, 5);
+            //g.fillRect((int) l.getX()[i], (int) l.getY()[i], 5, 5);
         }
 
         return bufferedImage;
