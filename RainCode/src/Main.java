@@ -1,6 +1,7 @@
 import Splines.Casteljau;
 import Splines.Interpolator;
 import Splines.Line;
+import Splines.Point;
 import cparse.FunParser;
 import cparse.GaussDistr;
 import cparse.Parser;
@@ -11,6 +12,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main extends JPanel {
@@ -29,8 +31,8 @@ public class Main extends JPanel {
         boolean server = args.length == 2;
 
 
-        int width = 3840*2;
-        int height = 2160*2;
+        int width = 3840 * 2;
+        int height = 2160 * 2;
 
 
         Parser parser = new FunParser(width, height);
@@ -40,7 +42,7 @@ public class Main extends JPanel {
             String[] files = {args[0]};
             lines = parser.parseFiles(files);
         } else {
-            String[] files = {"res/test2.c"};
+            String[] files = {"res/test.c"};
             lines = parser.parseFiles(files);
         }
 
@@ -53,7 +55,7 @@ public class Main extends JPanel {
 
         for (int i = 0; i < colors.length; i++) {
             g.setColor(colors[i]);
-            g.fillRect(i*100,0,100,100);
+            g.fillRect(i * 100, 0, 100, 100);
         }
 
         System.out.println(lines.size() + " lines");
@@ -70,13 +72,20 @@ public class Main extends JPanel {
         */
 
 
-        int color = (int)(Math.random()*7);
+        int color = (int) (Math.random() * 7);
+        /*
+        List<Point> constructs = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            constructs.add(new Point(Math.random() * width, Math.random() * height, 0, ""));
+        }
+        */
+
         for (int i = 0; i < lines.size(); i++) {
             Line longLine = lines.get(i);
-            if(Math.random() > 1.0/2) continue;;
-
 
             List<Line> splitLines = Line.betterHack(longLine, width, height, 2, 4, lines.size(), gauss);
+            //List<Line> splitLines = Line.evenBetterHack(longLine, constructs, 5, gauss, longLine.length(), i);
+
             for (int j = 0; j < splitLines.size(); j++) {
                 Interpolator interpolator = new Casteljau(splitLines.get(j));
                 interpolator.paint(bufferedImage, 0.01, colors[color % colors.length]);

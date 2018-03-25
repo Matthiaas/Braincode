@@ -100,6 +100,23 @@ public class Line {
         return r;
     }
 
+    public static List<Line> evenBetterHack(Line line, List<Point> constructs, int numConnections, GaussDistr g, int count, int offset) {
+        List<Line> r = new ArrayList<>();
+
+        for (int i = 0; i < line.points.size(); i++) {
+            for (int j = i + 1; j < line.points.size(); j++) {
+                List<Point> connection = new ArrayList<>(numConnections);
+                connection.add(line.points.get(i).deviate(g, count * 15));
+                for (int k = 0; k < numConnections - 2; k++) {
+                    connection.add(constructs.get(offset % constructs.size()).deviate(g, count * 5));
+                }
+                connection.add(line.points.get(j).deviate(g, count * 15));
+                r.add(new Line(connection));
+            }
+        }
+        return r;
+    }
+
 
     public static void scale(List<Line> lines, int width, int height) {
 
