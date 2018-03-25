@@ -114,11 +114,11 @@ public class Main extends JPanel {
                 "<img src=\"" + args[2] + "\" width=\"" + html_width + "\" height=\"" + html_hight + "\" alt=\"Karte\" usemap=\"#Landkarte\"> "
                 + "<map name=\"Methods\">";
 
-        List included
+      //  List included
         for (Line l : lines) {
 
-    <area shape =\"rect\" coords=\"11,10,80,46\"
-            href =\"http://www.koblenz.de/\" alt=\"Koblenz\" title=\"Koblenz\">
+  //  <area shape =\"rect\" coords=\"11,10,80,46\"
+    //        href =\"http://www.koblenz.de/\" alt=\"Koblenz\" title=\"Koblenz\">
         }
 
                html = html + "</map>";

@@ -51,6 +51,7 @@ public class FunParser implements Parser {
      */
     @Override
     public List<Line> parseString(String code) {
+        code = prePro(code);
         List<Line> ret = new ArrayList<Line>();
         code += "\n";
         int length = code.length();
@@ -81,6 +82,54 @@ public class FunParser implements Parser {
         return ret;
     }
 
+    public final static double DROPOUT  = 0.05;
+    private String prePro(String code){
+
+        HashMap<String, Integer>  funcs = new HashMap<>();
+        int methodGlobalCount = 0;
+
+        while(index < code.length()-1) {
+            String nameBuffer = "";
+            char c;
+
+
+
+            c = code.charAt(++index);
+            if (c == ' ') {
+                while (c == ' ') c = code.charAt(index++);
+                if (c == '(') {
+                    if (isFunction(nameBuffer)) {
+                        if (funcs.containsKey(nameBuffer))
+                            funcs.put(nameBuffer, funcs.get(nameBuffer) + 1);
+                        else
+                            funcs.put(nameBuffer, 1);
+                        methodGlobalCount++;
+                    }
+                }
+                nameBuffer = "";
+            } else if (goodChar(c)) {
+                nameBuffer += c + "";
+            } else if (c == '(') {
+                if (isFunction(nameBuffer)){
+                    if(funcs.containsKey(nameBuffer))
+                        funcs.put(nameBuffer,funcs.get(nameBuffer)+1);
+                    else
+                        funcs.put(nameBuffer , 1);
+                    methodGlobalCount++;
+                }
+            } else {
+                nameBuffer = "";
+            }
+        }
+
+        for (Map.Entry<String , Integer> entr : funcs.entrySet()){
+            if(entr.getValue() < methodGlobalCount * DROPOUT){
+                code = code.replaceAll(entr.getKey() + " *\\(.*" , " ");
+            }
+        }
+
+        return code;
+    }
 
     private Line findCalls(String code){
         int brackets = 1;
