@@ -206,12 +206,12 @@ public class FunParser implements Parser {
            long count = names.stream().filter(e -> e.equals(str)).count();
            hash++;
            long x = (hash*235723l)%primex, y = (hash*238477l)%primey, z =(hash*424234l)%primez;
-           methodeNameToPoint.put(str , new Point(x,y,z));
-           double[] xyz = gaussDistr.distribute(x,y,z,count);
+           methodeNameToPoint.put(str , new Point(x,y));
+           double[] xy = gaussDistr.distribute(x,y,count);
 
             //System.out.println(n + "\t\t\tx: " + xyz[0] + "\ty: " + xyz[1] + "\tz: " + xyz[2]);
 
-           line.add(xyz[0] ,xyz[1], xyz[2]);
+           line.add(xy[0] ,xy[1]);
        }
        return line;
     }

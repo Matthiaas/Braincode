@@ -7,10 +7,7 @@ public abstract class Interpolator {
 
     protected Line l;
 
-
-
     public Interpolator(Line l) {
-
         this.l = l;
     }
 
