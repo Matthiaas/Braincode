@@ -108,7 +108,7 @@ public class Main extends JPanel {
             double heightFaktor = height*1.0 / html_height;
 
             String html = "" +
-                    "<img src=\"out\\" + args[1] + "\" width=\"" + html_width + "\" height=\"" + html_height + "\" alt=\"Karte\" usemap=\"#Methods\"> "
+                    "<img src=\"out\\" + args[1] + "\" width=\"" + html_width + "\" height=\"" + html_height + "\" alt=\"Brainbow\" usemap=\"#Methods\"> "
                     + "<map name=\"Methods\">";
 
 
@@ -118,7 +118,7 @@ public class Main extends JPanel {
                 int yScaled = (int) (location.getY() / heightFaktor);
 
                 html = html +
-                        "<area shape =\"rect\" coords=\"" + (xScaled - 10) + "," + (yScaled - 10) + "," + (xScaled + 10) + "," + (yScaled + 10) + "\"" +
+                        "<area shape =\"circle\" coords=\"" + (xScaled) + "," + (yScaled) + "," + 20 + "," + (yScaled + 10) + "\"" +
                         "alt=\"" + method + "\" title=\"" + method + "\">";
 
             }
