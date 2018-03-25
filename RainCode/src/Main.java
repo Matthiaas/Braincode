@@ -55,16 +55,13 @@ public class Main extends JPanel {
         g.setColor(new Color(26, 25, 25));
         g.clearRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
 
-        for (int i = 0; i < colors.length; i++) {
-            g.setColor(colors[i]);
-            g.fillRect(i * 100, 0, 100, 100);
-        }
 
         //System.out.println(lines.size() + " lines");
 
         GaussDistr gauss = new GaussDistr(42);
         Random r  = new Random(1);
         int color = (int) (r.nextInt(7));
+
         /*
         List<Point> constructs = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
