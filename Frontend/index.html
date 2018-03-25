@@ -1,3 +1,15 @@
+<!--
+ *
+ * quick and dirty code!
+ * DO NOT USE IN PRODUCTION ENVIRONMENT
+ *
+ * SECURITY HAZARD
+ *
+ * you WILL die
+ *
+-->
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,24 +18,34 @@
     <link rel="stylesheet" href="css/bootstrap.css">
 
     <title>RainCode</title>
+    <script>
+    function superclick(){
+      getElementById('fileToUpload').click();
+    }
+    </script>
 </head>
 <body>
 <div class="container" style = "margin-top: 50px">
     <div class="header" style="height: 50px">
 
-        <h1 style = "float: left; font-size: 43px">RainCode</h1> <h5><br>&emsp;a Hackathon project</h5>
+        <h1 style = "float: left; font-size: 45px">RainCode</h1> <h5><br>&emsp;a Hackathon project</h5>
     </div>
 
     <div class="main" style="margin-top: 50px">
 
-        <form method="post" enctype="multipart/form-data" action="upload.php">
+        <form method="post" enctype="multipart/form-data" action="upload.php" target="_blank">
 
             <div class="form-group">
-                <label for="file">Enter a C source-code-file</label>
-                <input type="file" class="form-control-file" id="fileToUpload" accept=".c" name ="fileToUpload">
+                <!-- <p> Enter a C source-code-file</p>
+                <div style="display: block; width: 150px; height: 50px; overflow: hidden; float:left">
+                  <button class="btn btn-primary" style=" position: relative;"><a href="javascript: void(0)" style="color: #fff">Upload</a></button>
+                  <input type="file" id="fileToUpload" accept=".c" name="fileToUpload" style="font-size: 50px; width: 120px; opacity: 0; filter:alpha(opacity=0);  position: relative; top: -40px;; left: -20px" />
+                </div> -->
+                <input type="file" id="fileToUpload" accept=".c" name="fileToUpload"/>
+
             </div>
             <div class="form-group">
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary" style="float:left">Submit</button>
             </div>
         </form>
 

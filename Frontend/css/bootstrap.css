@@ -66,8 +66,10 @@ body {
   line-height: 1.5;
   color: #212529;
   text-align: left;
-  background-color: #fff;
+  background-color: #1A1919;
+  background-image: url('./bg.png');
 }
+
 
 [tabindex="-1"]:focus {
   outline: 0 !important;
@@ -559,6 +561,9 @@ pre code {
   padding-left: 15px;
   margin-right: auto;
   margin-left: auto;
+
+  height: 600px;
+  color: white;
 }
 
 @media (min-width: 576px) {
@@ -2023,7 +2028,7 @@ select.form-control:focus::-ms-value {
 .form-control-file,
 .form-control-range {
   display: block;
-  width: 100%;
+  width: 60px;
 }
 
 .col-form-label {
