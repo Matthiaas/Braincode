@@ -55,9 +55,6 @@ public class Main extends JPanel {
         g.setColor(new Color(26, 25, 25));
         g.clearRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
 
-
-        //System.out.println(lines.size() + " lines");
-
         GaussDistr gauss = new GaussDistr(42);
         Random r  = new Random(1);
         int color = (int) (r.nextInt(7));
@@ -77,7 +74,6 @@ public class Main extends JPanel {
 
             List<Line> splitLines = Line.betterHack(longLine, width, height, 3, 4, lines.size(), gauss);
             //List<Line> splitLines = Line.evenBetterHack(longLine, constructs, 5, gauss, longLine.length(), i);
-            //List<Line> splitLines = Line.hack(lines.get(i));
 
             for (int j = 0; j < splitLines.size(); j+= 1) {
 

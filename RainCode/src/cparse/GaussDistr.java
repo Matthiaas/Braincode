@@ -10,13 +10,10 @@ public class GaussDistr {
         random = new Random(seed);
     }
 
-    public double[] distribute(double x, double y, double z, long count) {
+    public double[] distribute(double x, double y, long count) {
         double[] ret = new double[3];
         ret [0] = x + random.nextGaussian()*count/10;
         ret [1] = y + random.nextGaussian()*count/10;
-        ret [2] = z + random.nextGaussian()*count/10;
-
-
 
         return ret;
     }

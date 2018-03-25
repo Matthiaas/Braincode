@@ -47,16 +47,8 @@ public class Line {
         return r;
     }
 
-    public double[] getZ() {
-        double[] r = new double[points.size()];
-        for (int i = 0; i < points.size(); i++) {
-            r[i] = points.get(i).z;
-        }
-        return r;
-    }
-
-    public void add(double x, double y, double z) {
-        points.add(new Point(x, y, z));
+    public void add(double x, double y) {
+        points.add(new Point(x, y));
     }
 
     public int length() {
@@ -67,22 +59,12 @@ public class Line {
         return "Line: \n" + points.stream().map(p -> "(" + p.x + "," + p.y + "," + p.z + ")").collect(Collectors.joining(","));
     }
 
-    public static List<Line> hack(Line l) {
-        List<Line> r = new ArrayList<>();
-        if (l.length() >= 8) {
-            List<Point> points = l.points;
-            r.add(new Line(l.points.subList(0, 4)));
-            r.add(new Line(l.points.subList(4, l.points.size())));
-        }
-        return r;
-    }
-
     public static List<Line> betterHack(Line line, int width, int height, int numPoints, int numConnections, int count, GaussDistr g) {
         List<Line> r = new ArrayList<>();
 
         List<Point> randomPoints = new ArrayList<>(numPoints);
         for (int i = 0; i < numPoints; i++) {
-            randomPoints.add(new Point(rand.nextDouble()* width, rand.nextDouble() * height, rand.nextDouble() * height));
+            randomPoints.add(new Point(rand.nextDouble()* width, rand.nextDouble() * height));
         }
 
         int randomIndex = 0;
@@ -106,11 +88,11 @@ public class Line {
         for (int i = 0; i < line.points.size(); i++) {
             for (int j = i + 1; j < line.points.size(); j++) {
                 List<Point> connection = new ArrayList<>(numConnections);
-                connection.add(line.points.get(i).deviate(g, count * 15));
+                connection.add(line.points.get(i).deviate(g, count * 30));
                 for (int k = 0; k < numConnections - 2; k++) {
-                    connection.add(constructs.get(offset % constructs.size()).deviate(g, count * 5));
+                    connection.add(constructs.get(offset++ % constructs.size()).deviate(g, count * 30));
                 }
-                connection.add(line.points.get(j).deviate(g, count * 15));
+                connection.add(line.points.get(j).deviate(g, count * 30));
                 r.add(new Line(connection));
             }
         }
