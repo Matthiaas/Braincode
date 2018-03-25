@@ -15,7 +15,7 @@
     <meta charset="UTF-8">
 
 
-    <title>RainCode</title>
+    <title>BrainCode</title>
 </head>
 <body style = "background-color: #1A1919; color: white">
 
