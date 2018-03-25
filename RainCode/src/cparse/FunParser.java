@@ -13,13 +13,13 @@ import java.util.*;
 
 /**
  * WARNING!!!!!!!!!!!!!!!!!!!!!!!!!
- * <p>
+ *
  * this class is toxic,
  * do not enter without proper supervision!
  * you WILL break something and I will
  * track you down, I will find you and swear to god
  * I WILL MURDER YOU IN YOUR sleep
- * <p>
+ *
  * kind regards,
  * fooris
  */
@@ -28,12 +28,14 @@ public class FunParser implements Parser {
 
 
     public static int PRIMEX = 3840, PRIMEY = 2160, PRIMEZ = 1;
-    public final static double DROPOUT = .009;
+    public final static double DROPOUT  = .009;
 
     private int index = 0;
     private GaussDistr gaussDistr = new GaussDistr(1337);
 
-    private Map<String, Point> methodeNameToPoint = new HashMap<>();
+    private Map<String , Point> methodeNameToPoint = new HashMap<>();
+
+
 
 
     public FunParser(int width, int height) {
@@ -42,6 +44,7 @@ public class FunParser implements Parser {
     }
 
     /**
+     *
      * super magic main method of class
      *
      * @param code
@@ -54,28 +57,26 @@ public class FunParser implements Parser {
         code += "\n";
         int length = code.length();
 
-        for (index = 0; index < length - 1; index++) {
+        for (index = 0; index < length; index++) {
             char c = code.charAt(index);
 
-
-            if (c == '{') {
-                Line line = findCalls(code);
-                if (line.length() >= 4)
-                    ret.add(line);
-            }
-
             if (c == '/') {
-                char c2 = code.charAt(index + 1);
-                if (c2 == '/') {
-                    while (index < length && c != '\n') {
+                c = code.charAt(++index);
+                if (c == '/') {
+                   do{
+                       c = code.charAt(++index);
+                   }while (c != '\n');
+                } else if (c == '*') {
+                    do{
                         c = code.charAt(++index);
-                    }
+                    }while (c != '*' && code.charAt(index+1) != '/');
+                    index++;
                 }
-                if (c2 == '*') {
-                    while (index < length - 1 && c != '*' && code.charAt(index + 1) != '/') {
-                        c = code.charAt(++index);
-                    }
-                }
+            }
+            else if(c == '{'){
+                Line line = findCalls(code);
+                if (line.length()>=4)
+                    ret.add(line);
             }
         }
 
@@ -83,14 +84,18 @@ public class FunParser implements Parser {
     }
 
 
-    private String prePro(String code) {
+    private String prePro(String code){
         int in = 0;
         //System.out.println(code);
-        HashMap<String, Integer> funcs = new HashMap<>();
+        HashMap<String, Integer>  funcs = new HashMap<>();
         int methodGlobalCount = 0;
         String nameBuffer = "";
-        char c;
-        while (in < code.length() - 1) {
+        while(in < code.length()-1) {
+
+            char c;
+
+
+
             c = code.charAt(++in);
             if (c == ' ') {
                 while (c == ' ') c = code.charAt(in++);
@@ -107,11 +112,11 @@ public class FunParser implements Parser {
             } else if (goodChar(c)) {
                 nameBuffer += c + "";
             } else if (c == '(') {
-                if (isFunction(nameBuffer)) {
-                    if (funcs.containsKey(nameBuffer))
-                        funcs.put(nameBuffer, funcs.get(nameBuffer) + 1);
+                if (isFunction(nameBuffer)){
+                    if(funcs.containsKey(nameBuffer))
+                        funcs.put(nameBuffer,funcs.get(nameBuffer)+1);
                     else
-                        funcs.put(nameBuffer, 1);
+                        funcs.put(nameBuffer , 1);
                     methodGlobalCount++;
                 }
             } else {
@@ -119,46 +124,42 @@ public class FunParser implements Parser {
             }
         }
 
-        for (Map.Entry<String, Integer> entr : funcs.entrySet()) {
+        for (Map.Entry<String , Integer> entr : funcs.entrySet()){
 
-            if (entr.getValue() < methodGlobalCount * DROPOUT) {
-                code = code.replaceAll(entr.getKey() + " *\\(.*", " ");
+            if(entr.getValue() < methodGlobalCount * DROPOUT){
+                code = code.replaceAll(entr.getKey() + " *\\(.*" , " ");
             }
             //else
-            // System.out.println(entr.getValue() + ",    " + (methodGlobalCount * DROPOUT) + "  "+ entr.getKey());
+               // System.out.println(entr.getValue() + ",    " + (methodGlobalCount * DROPOUT) + "  "+ entr.getKey());
         }
         return code;
     }
 
-    private Line findCalls(String code) {
+    private Line findCalls(String code){
         int brackets = 1;
         String nameBuffer = "";
         char c;
 
-        List<String> functions = new LinkedList<>();
+        List<String> functions = new LinkedList<String>();
 
-        while (brackets > 0 && index < code.length() - 1) {
-            c = code.charAt(index++);
-
-            if (goodChar(c)) {
-                nameBuffer += c + "";
-                continue;
-            } else if (c == ' ') {
+        while(brackets > 0 & index<code.length()-1){
+            c = code.charAt(++index);
+            if(c == ' '){
                 while (c == ' ') c = code.charAt(index++);
-                if (c == '(') {
-                    if (isFunction(nameBuffer)) functions.add(nameBuffer);
-                } else if (goodChar(c)) {
-                    nameBuffer += c + "";
-                    continue;
+                if(c == '('){
+                    if(isFunction(nameBuffer)) functions.add(nameBuffer);
                 }
                 nameBuffer = "";
-
-
-            } else if (c == '(') {
-                if (isFunction(nameBuffer)) functions.add(nameBuffer);
-            } else {
-                if (c == '{') brackets++;
-                if (c == '}') brackets--;
+            }
+            else if(goodChar(c)){
+                nameBuffer += c +"";
+            }
+            else if(c == '('){
+                if(isFunction(nameBuffer)) functions.add(nameBuffer);
+            }
+            else{
+                if(c == '{') brackets++;
+                if(c == '}') brackets--;
                 nameBuffer = "";
             }
         }
@@ -168,12 +169,12 @@ public class FunParser implements Parser {
     }
 
 
-    private boolean goodChar(char c) {
+    private boolean goodChar(char c){
         return (c >= 'a') && (c <= 'z') || (c >= 'A') && (c <= 'Z') || (c == '_');
     }
 
-    private boolean isFunction(String name) {
-        switch (name) {
+    private boolean isFunction(String name){
+        switch (name){
             case "if":
             case "else":
             case "elseif":
@@ -188,31 +189,31 @@ public class FunParser implements Parser {
         }
     }
 
-    public Point getCentreOfMethod(String name) {
+    public Point getCentreOfMethod(String name){
         return methodeNameToPoint.get(name);
     }
 
-    public Set<String> getMethods() {
+    public Set<String> getMethods(){
         return methodeNameToPoint.keySet();
     }
 
-    private Line mapNamesToPoints(List<String> names, int primex, int primey, int primez) {
+    private Line mapNamesToPoints(List<String> names, int primex, int primey, int primez){
         Line line = new Line();
-
+        
         for (String str : names) {
-            int hash = Math.abs(str.hashCode());
+           int hash = Math.abs(str.hashCode());
 
-            long count = names.stream().filter(e -> e.equals(str)).count();
-            hash++;
-            long x = (hash * 235723l) % primex, y = (hash * 238477l) % primey, z = (hash * 424234l) % primez;
-            methodeNameToPoint.put(str, new Point(x, y, z));
-            double[] xyz = gaussDistr.distribute(x, y, z, count);
+           long count = names.stream().filter(e -> e.equals(str)).count();
+           hash++;
+           long x = (hash*235723l)%primex, y = (hash*238477l)%primey, z =(hash*424234l)%primez;
+           methodeNameToPoint.put(str , new Point(x,y,z));
+           double[] xyz = gaussDistr.distribute(x,y,z,count);
 
             //System.out.println(n + "\t\t\tx: " + xyz[0] + "\ty: " + xyz[1] + "\tz: " + xyz[2]);
 
-            line.add(xyz[0], xyz[1], xyz[2]);
-        }
-        return line;
+           line.add(xyz[0] ,xyz[1], xyz[2]);
+       }
+       return line;
     }
 
 }
