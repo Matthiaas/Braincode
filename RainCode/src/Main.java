@@ -120,29 +120,33 @@ public class Main extends JPanel {
         panel.repaint();
         */
 
-        int html_width = 690;
-        int html_height = 538;
+        if(server) {
+            int html_width = 690;
+            int html_height = 538;
 
-        double widthFaktor = width/html_width;
-        double heightFaktor = height/html_height;
+            double widthFaktor = width / html_width;
+            double heightFaktor = height / html_height;
 
-        String html = "" +
-                "<img src=\"" + args[2] + "\" width=\"" + html_width + "\" height=\"" + html_height + "\" alt=\"Karte\" usemap=\"#Landkarte\"> "
-                + "<map name=\"Methods\">";
+            String html = "" +
+                    "<img src=\"" + args[2] + "\" width=\"" + html_width + "\" height=\"" + html_height + "\" alt=\"Karte\" usemap=\"#Landkarte\"> "
+                    + "<map name=\"Methods\">";
 
-        for (String method : ((FunParser) parser).getMethods()) {
-            Point location = ((FunParser) parser).getCentreOfMethod(method);
-            double xScaled = location.getX()/widthFaktor;
-            double yScaled = location.getY()/widthFaktor;
 
-            html = html +
-                    "<area shape =\"rect\" coords=\""+ (xScaled-5) + "," + (yScaled-5) + "," + (xScaled+5) + "," + (yScaled+5) + "\"" +
-                    "alt=\"" + method +"\" title=\"" + method + "\">";
+            for (String method : ((FunParser) parser).getMethods()) {
+                Point location = ((FunParser) parser).getCentreOfMethod(method);
+                double xScaled = location.getX() / widthFaktor;
+                double yScaled = location.getY() / widthFaktor;
+
+                html = html +
+                        "<area shape =\"rect\" coords=\"" + (xScaled - 5) + "," + (yScaled - 5) + "," + (xScaled + 5) + "," + (yScaled + 5) + "\"" +
+                        "alt=\"" + method + "\" title=\"" + method + "\">";
+
+            }
+
+            html = html + "</map>";
+
+            System.out.println(html);
         }
-
-        html = html + "</map>";
-
-        System.out.println(html);
 
     }
 
