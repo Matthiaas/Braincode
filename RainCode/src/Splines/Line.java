@@ -13,7 +13,7 @@ public class Line {
     private List<Point> points;
 
     private static Random rand = new Random(24);
-    private double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE, maxX = 0, maxY = 0;
+    private double minX = Double.MAX_VALUE, maxX = 0;
 
     public Line() {
         points = new ArrayList<>();
@@ -23,10 +23,31 @@ public class Line {
         this.points = points;
     }
 
+    public void add(double x, double y) {
+        points.add(new Point(x, y));
+    }
+
+    public int length() {
+        return points.size();
+    }
+
+    public String toString() {
+        return "Line: \n" + points.stream().map(p -> "(" + p.x + "," + p.y + ")").collect(Collectors.joining(","));
+    }
+
+    public static void scale(List<Line> lines, int width, int height) {
+
+        for (Line l : lines) {
+            for (Point p : l.points) {
+                p.x = 0.1 * width + p.x * 0.8;
+                p.y = 0.15 * height + p.y * 0.7;
+            }
+        }
+    }
+
     public double[] getX() {
         double[] r = new double[points.size()];
         for (int i = 0; i < points.size(); i++) {
-
             r[i] = points.get(i).x;
             minX = Double.min(r[i], minX);
             maxX = Double.max(r[i], maxX);
@@ -40,49 +61,29 @@ public class Line {
         double[] r = new double[points.size()];
         for (int i = 0; i < points.size(); i++) {
             r[i] = points.get(i).y;
-            minY = Double.min(r[i], minY);
-            maxY = Double.max(r[i], maxY);
             r[i] = points.get(i).y;
         }
         return r;
     }
 
-    public double[] getZ() {
-        double[] r = new double[points.size()];
-        for (int i = 0; i < points.size(); i++) {
-            r[i] = points.get(i).z;
-        }
-        return r;
+    public double getMinX() {
+        return minX;
     }
 
-    public void add(double x, double y, double z) {
-        points.add(new Point(x, y, z));
+    public double getMaxX() {
+        return maxX;
     }
 
-    public int length() {
-        return points.size();
+    public void sort() {
+        points.sort((l, r) -> ((Double.compare(l.x, r.x))));
     }
 
-    public String toString() {
-        return "Line: \n" + points.stream().map(p -> "(" + p.x + "," + p.y + "," + p.z + ")").collect(Collectors.joining(","));
-    }
-
-    public static List<Line> hack(Line l) {
-        List<Line> r = new ArrayList<>();
-        if (l.length() >= 8) {
-            List<Point> points = l.points;
-            r.add(new Line(l.points.subList(0, 4)));
-            r.add(new Line(l.points.subList(4, l.points.size())));
-        }
-        return r;
-    }
-
-    public static List<Line> betterHack(Line line, int width, int height, int numPoints, int numConnections, int count, GaussDistr g) {
+    public static List<Line> lineSplitV1(Line line, int width, int height, int numPoints, int numConnections, int count, GaussDistr g) {
         List<Line> r = new ArrayList<>();
 
         List<Point> randomPoints = new ArrayList<>(numPoints);
         for (int i = 0; i < numPoints; i++) {
-            randomPoints.add(new Point(rand.nextDouble()* width, rand.nextDouble() * height, rand.nextDouble() * height));
+            randomPoints.add(new Point(rand.nextDouble() * width, rand.nextDouble() * height));
         }
 
         int randomIndex = 0;
@@ -100,52 +101,20 @@ public class Line {
         return r;
     }
 
-    public static List<Line> evenBetterHack(Line line, List<Point> constructs, int numConnections, GaussDistr g, int count, int offset) {
+    public static List<Line> lineSplitV2(Line line, List<Point> constructs, int numConnections, GaussDistr g, int count, int offset) {
         List<Line> r = new ArrayList<>();
 
         for (int i = 0; i < line.points.size(); i++) {
             for (int j = i + 1; j < line.points.size(); j++) {
                 List<Point> connection = new ArrayList<>(numConnections);
-                connection.add(line.points.get(i).deviate(g, count * 15));
+                connection.add(line.points.get(i).deviate(g, count * 30));
                 for (int k = 0; k < numConnections - 2; k++) {
-                    connection.add(constructs.get(offset % constructs.size()).deviate(g, count * 5));
+                    connection.add(constructs.get(offset++ % constructs.size()).deviate(g, count * 30));
                 }
-                connection.add(line.points.get(j).deviate(g, count * 15));
+                connection.add(line.points.get(j).deviate(g, count * 30));
                 r.add(new Line(connection));
             }
         }
         return r;
-    }
-
-
-    public static void scale(List<Line> lines, int width, int height) {
-
-        for (Line l : lines) {
-            for (Point p : l.points) {
-                p.x = 0.1 * width + p.x * 0.8;
-                p.y = 0.15 * height + p.y * 0.7;
-            }
-        }
-    }
-
-
-    public double getMinX() {
-        return minX;
-    }
-
-    public double getMinY() {
-        return minY;
-    }
-
-    public double getMaxX() {
-        return maxX;
-    }
-
-    public double getMaxY() {
-        return maxY;
-    }
-
-    public void sort() {
-        points.sort((l, r) -> ((Double.compare(l.x, r.x))));
     }
 }

@@ -7,10 +7,7 @@ public abstract class Interpolator {
 
     protected Line l;
 
-
-
     public Interpolator(Line l) {
-
         this.l = l;
     }
 
@@ -32,11 +29,6 @@ public abstract class Interpolator {
             x_new = (int) xy[0];
             y_new = (int) xy[1];
             g.drawLine(x_old, y_old, x_new, y_new);
-        }
-
-        for (int i = 0; i < l.length(); i++) {
-          //  g.setColor(Color.cyan);
-          // g.fillRect((int) l.getX()[i], (int) l.getY()[i], 50, 50);
         }
 
         return bufferedImage;
