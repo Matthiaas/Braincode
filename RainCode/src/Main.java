@@ -42,7 +42,7 @@ public class Main extends JPanel {
             String[] files = {args[0]};
             lines = parser.parseFiles(files);
         } else {
-            String[] files = {"res/test3.c"};
+            String[] files = {"res/test2.c"};
             lines = parser.parseFiles(files);
         }
 
@@ -55,12 +55,19 @@ public class Main extends JPanel {
 
         System.out.println(lines.size() + " lines");
         GaussDistr gauss = new GaussDistr(42);
-        for (int i = 0; i < lines.size(); i = i + 2) {
+
+
+        int cc = 0;
+        for (int i = 0; i < lines.size(); i++) {
             Line longLine = lines.get(i);
+            if(Math.random() > 1.0/2) continue;;
+
+
             List<Line> splitLines = Line.betterHack(longLine, width, height, 2, 4, lines.size(), gauss);
-            for (int j = 0; j < splitLines.size(); j = j + 30) {
+            for (int j = 0; j < splitLines.size(); j++) {
+                if(Math.random() > 1.0/30) continue;;
                 Interpolator interpolator = new Casteljau(splitLines.get(j));
-                interpolator.paint(bufferedImage, 0.01, colors[(i * 35 % 17) % colors.length]);
+                interpolator.paint(bufferedImage, 0.01, colors[cc++ % colors.length]);
             }
         }
 
