@@ -31,8 +31,8 @@ public class Main extends JPanel {
         boolean server = args.length == 2;
 
 
-        int width = 3840 *2;
-        int height = 2160 *2 ;
+        int width = 3840 ;
+        int height = 2160  ;
 
 
         Parser parser = new FunParser(width, height);
@@ -42,7 +42,7 @@ public class Main extends JPanel {
             String[] files = {args[0]};
             lines = parser.parseFiles(files);
         } else {
-            String[] files = {"res/test3.c"};
+            String[] files = {"res/test.c"};
             lines = parser.parseFiles(files);
         }
 

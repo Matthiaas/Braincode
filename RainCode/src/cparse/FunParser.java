@@ -28,7 +28,7 @@ public class FunParser implements Parser {
 
 
     public static int PRIMEX = 3840, PRIMEY = 2160, PRIMEZ = 1;
-
+    public final static double DROPOUT  = .004;
 
     private int index = 0;
     private GaussDistr gaussDistr = new GaussDistr(1337);
@@ -83,7 +83,7 @@ public class FunParser implements Parser {
         return ret;
     }
 
-    public final static double DROPOUT  = .01;
+
     private String prePro(String code){
         int in = 0;
         //System.out.println(code);
@@ -128,8 +128,9 @@ public class FunParser implements Parser {
 
             if(entr.getValue() < methodGlobalCount * DROPOUT){
                 code = code.replaceAll(entr.getKey() + " *\\(.*" , " ");
-            }else
-                System.out.println(entr.getValue() + ",    " + (methodGlobalCount * DROPOUT) + "  "+ entr.getKey());
+            }
+            //else
+               // System.out.println(entr.getValue() + ",    " + (methodGlobalCount * DROPOUT) + "  "+ entr.getKey());
         }
         return code;
     }
