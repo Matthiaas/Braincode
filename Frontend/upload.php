@@ -17,7 +17,7 @@
 
     <title>BrainCode</title>
 </head>
-<body style = "background-color: #1A1919; color: white">
+<body style = "background-color: #000000; color: white">
 
 
 <?php
