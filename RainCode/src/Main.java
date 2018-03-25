@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -119,27 +120,26 @@ public class Main extends JPanel {
             int html_width = 690;
             int html_height = 538;
 
-            double widthFaktor = width / html_width;
-            double heightFaktor = height / html_height;
+            double widthFaktor = width*1.0/ html_width;
+            double heightFaktor = height*1.0 / html_height;
 
             String html = "" +
-                    "<img src=\"" + args[2] + "\" width=\"" + html_width + "\" height=\"" + html_height + "\" alt=\"Karte\" usemap=\"#Landkarte\"> "
+                    "<img src=\"out\\" + args[1] + "\" width=\"" + html_width + "\" height=\"" + html_height + "\" alt=\"Karte\" usemap=\"#Methods\"> "
                     + "<map name=\"Methods\">";
 
 
             for (String method : ((FunParser) parser).getMethods()) {
                 Point location = ((FunParser) parser).getCentreOfMethod(method);
-                double xScaled = location.getX() / widthFaktor;
-                double yScaled = location.getY() / widthFaktor;
+                int xScaled = (int) (location.getX() / widthFaktor);
+                int yScaled = (int) (location.getY() / heightFaktor);
 
                 html = html +
-                        "<area shape =\"rect\" coords=\"" + (xScaled - 5) + "," + (yScaled - 5) + "," + (xScaled + 5) + "," + (yScaled + 5) + "\"" +
+                        "<area shape =\"rect\" coords=\"" + (xScaled - 10) + "," + (yScaled - 10) + "," + (xScaled + 10) + "," + (yScaled + 10) + "\"" +
                         "alt=\"" + method + "\" title=\"" + method + "\">";
 
             }
 
             html = html + "</map>";
-
             System.out.println(html);
         }
 
