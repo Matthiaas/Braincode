@@ -31,8 +31,8 @@ public class Main extends JPanel {
         boolean server = args.length == 2;
 
 
-        int width = 3840 * 2;
-        int height = 2160 * 2;
+        int width = 3840 *2;
+        int height = 2160 *2 ;
 
 
         Parser parser = new FunParser(width, height);
@@ -82,17 +82,19 @@ public class Main extends JPanel {
 
         for (int i = 0; i < lines.size(); i++) {
             Line longLine = lines.get(i);
-
+            if(longLine.length() > 100) continue;
            // if(Math.random() > 1.0/2) continue;;
 
-            List<Line> splitLines = Line.betterHack(longLine, width, height, 2, 4, lines.size(), gauss);
+            List<Line> splitLines = Line.betterHack(longLine, width, height, 3, 4, lines.size(), gauss);
             //List<Line> splitLines = Line.evenBetterHack(longLine, constructs, 5, gauss, longLine.length(), i);
             //List<Line> splitLines = Line.hack(lines.get(i));
 
-            for (int j = 0; j < splitLines.size(); j++) {
+            for (int j = 0; j < splitLines.size(); j+= 1) {
                 Interpolator interpolator = new Casteljau(splitLines.get(j));
                 interpolator.paint(bufferedImage, 0.01, colors[color % colors.length]);
+
             }
+
             color++;
         }
 
