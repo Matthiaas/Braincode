@@ -2,12 +2,7 @@ package cparse;
 
 import Splines.Line;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.file.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,11 +21,15 @@ import java.util.List;
 
 public class FunParser implements Parser {
 
-    public static final int PRIMEX = 3840, PRIMEY = 2160, PRIMEZ = 43037;
-
-
+    private final int primeX, primeY, primeZ;
     int index = 0;
     GaussDistr gaussDistr = new GaussDistr(1337);
+
+    public FunParser(int width, int height) {
+        primeX = width;
+        primeY = height;
+        primeZ = 1;
+    }
 
     /**
      *
@@ -103,7 +102,7 @@ public class FunParser implements Parser {
         System.out.println("------------------------------------------------------");
         functions.stream().forEach(e -> System.out.println(e));
         System.out.println("------------------------------------------------------");
-        return mapNamesToPoints(functions, PRIMEX,PRIMEY,PRIMEZ);
+        return mapNamesToPoints(functions, primeX, primeY, primeZ);
 
     }
 

@@ -31,7 +31,7 @@ public class MatzesRegressionMain extends JPanel {
         frame.setSize(2000, 800);
         frame.setLocationRelativeTo(null);
 
-        Parser parser = new FunParser();
+        Parser parser = new FunParser(2000,800);
         List<Line> lines = parser.parseFile("res/test6.c");
         Line.scale(lines, frame.getWidth(), frame.getHeight());
 
