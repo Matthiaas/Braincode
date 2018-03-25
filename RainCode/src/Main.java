@@ -11,6 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -146,8 +147,14 @@ public class Main extends JPanel {
             }
 
             html = html + "</map>";
-
-            System.out.println(html);
+            try {
+                File text_out = new File("out/text_out.txt");
+                FileWriter fw = new FileWriter(text_out);
+                fw.write(html);
+                fw.close();
+            }catch(IOException e){
+                e.printStackTrace();
+            }
         }
 
     }
