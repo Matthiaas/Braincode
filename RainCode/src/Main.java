@@ -73,6 +73,9 @@ public class Main extends JPanel {
         int color = (int)(Math.random()*7);
         for (int i = 0; i < lines.size(); i++) {
             Line longLine = lines.get(i);
+            if(Math.random() > 1.0/2) continue;;
+
+
             List<Line> splitLines = Line.betterHack(longLine, width, height, 2, 4, lines.size(), gauss);
             for (int j = 0; j < splitLines.size(); j++) {
                 Interpolator interpolator = new Casteljau(splitLines.get(j));

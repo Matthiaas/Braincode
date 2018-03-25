@@ -134,7 +134,7 @@ public class FunParser implements Parser {
 
             //System.out.println(n + "\t\t\tx: " + xyz[0] + "\ty: " + xyz[1] + "\tz: " + xyz[2]);
 
-           line.add(xyz[0] ,xyz[1], xyz[2]);
+           line.add(xyz[0] ,xyz[1], xyz[2], n);
        }
        return line;
     }
