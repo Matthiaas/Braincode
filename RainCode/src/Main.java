@@ -58,7 +58,7 @@ public class Main extends JPanel {
             g.fillRect(i * 100, 0, 100, 100);
         }
 
-        System.out.println(lines.size() + " lines");
+        //System.out.println(lines.size() + " lines");
 
         GaussDistr gauss = new GaussDistr(42);
 
