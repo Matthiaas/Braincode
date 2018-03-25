@@ -44,7 +44,7 @@ public class Main extends JPanel {
             String[] files = {args[0]};
             lines = parser.parseFiles(files);
         } else {
-            String[] files = {"res/coreutils/head.c","res/coreutils/tail.c"};
+            String[] files = {"res/test4.c"};//{"res/coreutils/head.c","res/coreutils/tail.c"};
             lines = parser.parseFiles(files);
         }
 
@@ -92,6 +92,8 @@ public class Main extends JPanel {
             color++;
         }
 
+
+
         String fileName = server ? "out/" + args[1] : "res/pics/" + System.currentTimeMillis() + ".png";
         File f = new File(fileName);
         try {
@@ -114,11 +116,13 @@ public class Main extends JPanel {
 
             for (String method : ((FunParser) parser).getMethods()) {
                 Point location = ((FunParser) parser).getCentreOfMethod(method);
+                location.scale(width, height);
+
                 int xScaled = (int) (location.getX() / widthFaktor);
                 int yScaled = (int) (location.getY() / heightFaktor);
 
                 html = html +
-                        "<area shape =\"circle\" coords=\"" + (xScaled) + "," + (yScaled) + "," + 20 + "," + (yScaled + 10) + "\"" +
+                        "<area shape =\"circle\" coords=\"" + (xScaled) + "," + (yScaled) + "," + 20 + "\"" +
                         "alt=\"" + method + "\" title=\"" + method + "\">";
 
             }
