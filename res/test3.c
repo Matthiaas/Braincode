@@ -1,39 +1,4 @@
-/* Parser for C and Objective-C.
-   Copyright (C) 1987-2017 Free Software Foundation, Inc.
 
-   Parser actions based on the old Bison parser; structure somewhat
-   influenced by and fragments based on the C++ parser.
-
-This file is part of GCC.
-
-GCC is free software; you can redistribute it and/or modify it under
-the terms of the GNU General Public License as published by the Free
-Software Foundation; either version 3, or (at your option) any later
-version.
-
-GCC is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or
-FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-for more details.
-
-You should have received a copy of the GNU General Public License
-along with GCC; see the file COPYING3.  If not see
-<http://www.gnu.org/licenses/>.  */
-
-/* TODO:
-
-   Make sure all relevant comments, and all relevant code from all
-   actions, brought over from old parser.  Verify exact correspondence
-   of syntax accepted.
-
-   Add testcases covering every input symbol in every state in old and
-   new parsers.
-
-   Include full syntax for GNU C, including erroneous cases accepted
-   with error messages, in syntax productions in comments.
-
-   Make more diagnostics in the front end generally take an explicit
-   location rather than implicitly using input_location.  */
 
 #include "config.h"
 #include "system.h"
@@ -66,12 +31,6 @@ along with GCC; see the file COPYING3.  If not see
 #include "run-rtl-passes.h"
 #include "intl.h"
 
-/* We need to walk over decls with incomplete struct/union/enum types
-   after parsing the whole translation unit.
-   In finish_decl(), if the decl is static, has incomplete
-   struct/union/enum type, it is appeneded to incomplete_record_decls.
-   In c_parser_translation_unit(), we iterate over incomplete_record_decls
-   and report error if any of the decls are still incomplete.  */ 
 
 vec<tree> incomplete_record_decls;
 
@@ -156,9 +115,7 @@ c_parse_init (void)
     }
 }
 
-/* A parser structure recording information about the state and
-   context of parsing.  Includes lexer information with up to two
-   tokens of look-ahead; more are not needed for C.  */
+
 struct GTY(()) c_parser {
   /* The look-ahead tokens.  */
   c_token * GTY((skip)) tokens;
@@ -184,15 +141,9 @@ struct GTY(()) c_parser {
   /* True if we are in a context where the Objective-C "PQ" keywords
      are considered keywords.  */
   BOOL_BITFIELD objc_pq_context : 1;
-  /* True if we are parsing a (potential) Objective-C foreach
-     statement.  This is set to true after we parsed 'for (' and while
-     we wait for 'in' or ';' to decide if it's a standard C for loop or an
-     Objective-C foreach loop.  */
+
   BOOL_BITFIELD objc_could_be_foreach_context : 1;
-  /* The following flag is needed to contextualize Objective-C lexical
-     analysis.  In some cases (e.g., 'int NSObject;'), it is
-     undesirable to bind an identifier to an Objective-C class, even
-     if a class with that name exists.  */
+
   BOOL_BITFIELD objc_need_raw_identifier : 1;
   /* Nonzero if we're processing a __transaction statement.  The value
      is 1 | TM_STMT_ATTR_*.  */
@@ -3299,89 +3250,6 @@ c_parser_alignas_specifier (c_parser * parser)
   return ret;
 }
 
-/* Parse a declarator, possibly an abstract declarator (C90 6.5.4,
-   6.5.5, C99 6.7.5, 6.7.6, C11 6.7.6, 6.7.7).  If TYPE_SEEN_P then
-   a typedef name may be redeclared; otherwise it may not.  KIND
-   indicates which kind of declarator is wanted.  Returns a valid
-   declarator except in the case of a syntax error in which case NULL is
-   returned.  *SEEN_ID is set to true if an identifier being declared is
-   seen; this is used to diagnose bad forms of abstract array declarators
-   and to determine whether an identifier list is syntactically permitted.
-
-   declarator:
-     pointer[opt] direct-declarator
-
-   direct-declarator:
-     identifier
-     ( attributes[opt] declarator )
-     direct-declarator array-declarator
-     direct-declarator ( parameter-type-list )
-     direct-declarator ( identifier-list[opt] )
-
-   pointer:
-     * type-qualifier-list[opt]
-     * type-qualifier-list[opt] pointer
-
-   type-qualifier-list:
-     type-qualifier
-     attributes
-     type-qualifier-list type-qualifier
-     type-qualifier-list attributes
-
-   array-declarator:
-     [ type-qualifier-list[opt] assignment-expression[opt] ]
-     [ static type-qualifier-list[opt] assignment-expression ]
-     [ type-qualifier-list static assignment-expression ]
-     [ type-qualifier-list[opt] * ]
-
-   parameter-type-list:
-     parameter-list
-     parameter-list , ...
-
-   parameter-list:
-     parameter-declaration
-     parameter-list , parameter-declaration
-
-   parameter-declaration:
-     declaration-specifiers declarator attributes[opt]
-     declaration-specifiers abstract-declarator[opt] attributes[opt]
-
-   identifier-list:
-     identifier
-     identifier-list , identifier
-
-   abstract-declarator:
-     pointer
-     pointer[opt] direct-abstract-declarator
-
-   direct-abstract-declarator:
-     ( attributes[opt] abstract-declarator )
-     direct-abstract-declarator[opt] array-declarator
-     direct-abstract-declarator[opt] ( parameter-type-list[opt] )
-
-   GNU extensions:
-
-   direct-declarator:
-     direct-declarator ( parameter-forward-declarations
-			 parameter-type-list[opt] )
-
-   direct-abstract-declarator:
-     direct-abstract-declarator[opt] ( parameter-forward-declarations
-				       parameter-type-list[opt] )
-
-   parameter-forward-declarations:
-     parameter-list ;
-     parameter-forward-declarations parameter-list ;
-
-   The uses of attributes shown above are GNU extensions.
-
-   Some forms of array declarator are not included in C99 in the
-   syntax for abstract declarators; these are disallowed elsewhere.
-   This may be a defect (DR#289).
-
-   This function also accepts an omitted abstract declarator as being
-   an abstract declarator, although not part of the formal syntax.  */
-
 struct c_declarator *
 c_parser_declarator (c_parser *parser, bool type_seen_p, c_dtr_syn kind,
 		     bool *seen_id)
@@ -3405,46 +3273,11 @@ c_parser_declarator (c_parser *parser, bool type_seen_p, c_dtr_syn kind,
   return c_parser_direct_declarator (parser, type_seen_p, kind, seen_id);
 }
 
-/* Parse a direct declarator or direct abstract declarator; arguments
-   as c_parser_declarator.  */
 
 static struct c_declarator *
 c_parser_direct_declarator (c_parser *parser, bool type_seen_p, c_dtr_syn kind,
 			    bool *seen_id)
 {
-  /* The direct declarator must start with an identifier (possibly
-     omitted) or a parenthesized declarator (possibly abstract).  In
-     an ordinary declarator, initial parentheses must start a
-     parenthesized declarator.  In an abstract declarator or parameter
-     declarator, they could start a parenthesized declarator or a
-     parameter list.  To tell which, the open parenthesis and any
-     following attributes must be read.  If a declaration specifier
-     follows, then it is a parameter list; if the specifier is a
-     typedef name, there might be an ambiguity about redeclaring it,
-     which is resolved in the direction of treating it as a typedef
-     name.  If a close parenthesis follows, it is also an empty
-     parameter list, as the syntax does not permit empty abstract
-     declarators.  Otherwise, it is a parenthesized declarator (in
-     which case the analysis may be repeated inside it, recursively).
-
-     ??? There is an ambiguity in a parameter declaration "int
-     (__attribute__((foo)) x)", where x is not a typedef name: it
-     could be an abstract declarator for a function, or declare x with
-     parentheses.  The proper resolution of this ambiguity needs
-     documenting.  At present we follow an accident of the old
-     parser's implementation, whereby the first parameter must have
-     some declaration specifiers other than just attributes.  Thus as
-     a parameter declaration it is treated as a parenthesized
-     parameter named x, and as an abstract declarator it is
-     rejected.
-
-     ??? Also following the old parser, attributes inside an empty
-     parameter list are ignored, making it a list not yielding a
-     prototype, rather than giving an error or making it have one
-     parameter with implicit type int.
-
-     ??? Also following the old parser, typedef names may be
-     redeclared in declarators, but not Objective-C class names.  */
 
   if (kind != C_DTR_ABSTRACT
       && c_parser_next_token_is (parser, CPP_NAME)
@@ -3469,8 +3302,6 @@ c_parser_direct_declarator (c_parser *parser, bool type_seen_p, c_dtr_syn kind,
       return c_parser_direct_declarator_inner (parser, *seen_id, inner);
     }
 
-  /* Either we are at the end of an abstract declarator, or we have
-     parentheses.  */
 
   if (c_parser_next_token_is (parser, CPP_OPEN_PAREN))
     {
@@ -3496,7 +3327,7 @@ c_parser_direct_declarator (c_parser *parser, bool type_seen_p, c_dtr_syn kind,
 						       inner);
 	    }
 	}
-      /* A parenthesized declarator.  */
+
       inner = c_parser_declarator (parser, type_seen_p, kind, seen_id);
       if (inner != NULL && attrs != NULL)
 	inner = build_attrs_declarator (attrs, inner);
@@ -3527,10 +3358,6 @@ c_parser_direct_declarator (c_parser *parser, bool type_seen_p, c_dtr_syn kind,
     }
 }
 
-/* Parse part of a direct declarator or direct abstract declarator,
-   given that some (in INNER) has already been parsed; ID_PRESENT is
-   true if an identifier is present, false for an abstract
-   declarator.  */
 
 static struct c_declarator *
 c_parser_direct_declarator_inner (c_parser *parser, bool id_present,
@@ -3559,9 +3386,7 @@ c_parser_direct_declarator_inner (c_parser *parser, bool id_present,
 			    false, false, cla_prefer_id);
       if (!quals_attrs->declspecs_seen_p)
 	quals_attrs = NULL;
-      /* If "static" is present, there must be an array dimension.
-	 Otherwise, there may be a dimension, "*", or no
-	 dimension.  */
+
       if (static_seen)
 	{
 	  star_seen = false;
@@ -3646,10 +3471,7 @@ c_parser_direct_declarator_inner (c_parser *parser, bool id_present,
   return inner;
 }
 
-/* Parse a parameter list or identifier list, including the closing
-   parenthesis but not the opening one.  ATTRS are the attributes at
-   the start of the list.  ID_LIST_OK is true if an identifier list is
-   acceptable; such a list must not have attributes at the start.  */
+
 
 static struct c_arg_info *
 c_parser_parms_declarator (c_parser *parser, bool id_list_ok, tree attrs)
@@ -3712,23 +3534,14 @@ c_parser_parms_declarator (c_parser *parser, bool id_list_ok, tree attrs)
     }
 }
 
-/* Parse a parameter list (possibly empty), including the closing
-   parenthesis but not the opening one.  ATTRS are the attributes at
-   the start of the list.  EXPR is NULL or an expression that needs to
-   be evaluated for the side effects of array size expressions in the
-   parameters.  */
+
 
 static struct c_arg_info *
 c_parser_parms_list_declarator (c_parser *parser, tree attrs, tree expr)
 {
   bool bad_parm = false;
 
-  /* ??? Following the old parser, forward parameter declarations may
-     use abstract declarators, and if no real parameter declarations
-     follow the forward declarations then this is not diagnosed.  Also
-     note as above that attributes are ignored as the only contents of
-     the parentheses, or as the only contents after forward
-     declarations.  */
+
   if (c_parser_next_token_is (parser, CPP_CLOSE_PAREN))
     {
       struct c_arg_info *ret = build_arg_info ();
@@ -3746,7 +3559,7 @@ c_parser_parms_list_declarator (c_parser *parser, tree attrs, tree expr)
         }
       else
         {
-          /* Suppress -Wold-style-definition for this case.  */
+
           ret->types = error_mark_node;
           error_at (c_parser_peek_token (parser)->location,
                     "ISO C requires a named argument before %<...%>");
@@ -3764,9 +3577,7 @@ c_parser_parms_list_declarator (c_parser *parser, tree attrs, tree expr)
 	  return NULL;
 	}
     }
-  /* Nonempty list of parameters, either terminated with semicolon
-     (forward declarations; recurse) or with close parenthesis (normal
-     function) or with ", ... )" (variadic function).  */
+
   while (true)
     {
       /* Parse a parameter.  */
@@ -3819,8 +3630,7 @@ c_parser_parms_list_declarator (c_parser *parser, tree attrs, tree expr)
     }
 }
 
-/* Parse a parameter declaration.  ATTRS are the attributes at the
-   start of the declaration if it is the first parameter.  */
+
 
 static struct c_parm *
 c_parser_parameter_declaration (c_parser *parser, tree attrs)
@@ -3891,16 +3701,7 @@ c_parser_parameter_declaration (c_parser *parser, tree attrs)
 		       declarator);
 }
 
-/* Parse a string literal in an asm expression.  It should not be
-   translated, and wide string literals are an error although
-   permitted by the syntax.  This is a GNU extension.
 
-   asm-string-literal:
-     string-literal
-
-   ??? At present, following the old parser, the caller needs to have
-   set lex_untranslated_string to 1.  It would be better to follow the
-   C++ parser rather than using this kludge.  */
 
 static tree
 c_parser_asm_string_literal (c_parser *parser)
@@ -3929,13 +3730,7 @@ c_parser_asm_string_literal (c_parser *parser)
   return str;
 }
 
-/* Parse a simple asm expression.  This is used in restricted
-   contexts, where a full expression with inputs and outputs does not
-   make sense.  This is a GNU extension.
 
-   simple-asm-expr:
-     asm ( asm-string-literal )
-*/
 
 static tree
 c_parser_simple_asm_expr (c_parser *parser)
@@ -4034,12 +3829,7 @@ c_parser_attribute_any_word (c_parser *parser)
 	 | (OMP_CLAUSE_MASK_1 << PRAGMA_CILK_CLAUSE_MASK)	  \
 	 | (OMP_CLAUSE_MASK_1 << PRAGMA_CILK_CLAUSE_NOMASK))
 
-/* Parses the vector attribute of SIMD enabled functions in Cilk Plus.
-   VEC_TOKEN is the "vector" token that is replaced with "simd" and
-   pushed into the token list. 
-   Syntax:
-   vector
-   vector (<vector attributes>).  */
+
 
 static void
 c_parser_cilk_simd_fn_vector_attrs (c_parser *parser, c_token vec_token)
@@ -4084,45 +3874,17 @@ c_finish_cilk_simd_fn_tokens (c_parser *parser)
 {
   c_token last_token = parser->cilk_simd_fn_tokens->last ();
 
-  /* c_parser_attributes is called in several places, so if these EOF
-     tokens are already inserted, then don't do them again.  */
+
   if (last_token.type == CPP_EOF)
     return;
-  
-  /* Two CPP_EOF token are added as a safety net since the normal C
-     front-end has two token look-ahead.  */
+
   c_token eof_token;
   eof_token.type = CPP_EOF;
   vec_safe_push (parser->cilk_simd_fn_tokens, eof_token);
   vec_safe_push (parser->cilk_simd_fn_tokens, eof_token);
 }
 
-/* Parse (possibly empty) attributes.  This is a GNU extension.
 
-   attributes:
-     empty
-     attributes attribute
-
-   attribute:
-     __attribute__ ( ( attribute-list ) )
-
-   attribute-list:
-     attrib
-     attribute_list , attrib
-
-   attrib:
-     empty
-     any-word
-     any-word ( identifier )
-     any-word ( identifier , nonempty-expr-list )
-     any-word ( expr-list )
-
-   where the "identifier" must not be declared as a type, and
-   "any-word" may be any identifier (including one declared as a
-   type), a reserved word storage class specifier, type specifier or
-   type qualifier.  ??? This still leaves out most reserved keywords
-   (following the old parser), shouldn't we include them, and why not
-   allow identifiers declared as types to start the arguments?  */
 
 static tree
 c_parser_attributes (c_parser *parser)
@@ -4130,12 +3892,11 @@ c_parser_attributes (c_parser *parser)
   tree attrs = NULL_TREE;
   while (c_parser_next_token_is_keyword (parser, RID_ATTRIBUTE))
     {
-      /* ??? Follow the C++ parser rather than using the
-	 lex_untranslated_string kludge.  */
+
       parser->lex_untranslated_string = true;
-      /* Consume the `__attribute__' keyword.  */
+
       c_parser_consume_token (parser);
-      /* Look for the two `(' tokens.  */
+
       if (!c_parser_require (parser, CPP_OPEN_PAREN, "expected %<(%>"))
 	{
 	  parser->lex_untranslated_string = false;
@@ -4147,7 +3908,7 @@ c_parser_attributes (c_parser *parser)
 	  c_parser_skip_until_found (parser, CPP_CLOSE_PAREN, NULL);
 	  return attrs;
 	}
-      /* Parse the attribute list.  */
+
       while (c_parser_next_token_is (parser, CPP_COMMA)
 	     || c_parser_next_token_is (parser, CPP_NAME)
 	     || c_parser_next_token_is (parser, CPP_KEYWORD))
@@ -4167,7 +3928,7 @@ c_parser_attributes (c_parser *parser)
 	    {
 	      c_token *v_token = c_parser_peek_token (parser);
 	      c_parser_cilk_simd_fn_vector_attrs (parser, *v_token);
-	      /* If the next token isn't a comma, we're done.  */
+
 	      if (!c_parser_next_token_is (parser, CPP_COMMA))
 		break;
 	      continue;
@@ -4184,11 +3945,7 @@ c_parser_attributes (c_parser *parser)
 	      continue;
 	    }
 	  c_parser_consume_token (parser);
-	  /* Parse the attribute contents.  If they start with an
-	     identifier which is followed by a comma or close
-	     parenthesis, then the arguments start with that
-	     identifier; otherwise they are an expression list.  
-	     In objective-c the identifier may be a classname.  */
+
 	  if (c_parser_next_token_is (parser, CPP_NAME)
 	      && (c_parser_peek_token (parser)->id_kind == C_ID_ID
 		  || (c_dialect_objc ()
@@ -4272,11 +4029,6 @@ c_parser_attributes (c_parser *parser)
   return attrs;
 }
 
-/* Parse a type name (C90 6.5.5, C99 6.7.6, C11 6.7.7).
-
-   type-name:
-     specifier-qualifier-list abstract-declarator[opt]
-*/
 
 struct c_type_name *
 c_parser_type_name (c_parser *parser)
@@ -4308,48 +4060,7 @@ c_parser_type_name (c_parser *parser)
   return ret;
 }
 
-/* Parse an initializer (C90 6.5.7, C99 6.7.8, C11 6.7.9).
 
-   initializer:
-     assignment-expression
-     { initializer-list }
-     { initializer-list , }
-
-   initializer-list:
-     designation[opt] initializer
-     initializer-list , designation[opt] initializer
-
-   designation:
-     designator-list =
-
-   designator-list:
-     designator
-     designator-list designator
-
-   designator:
-     array-designator
-     . identifier
-
-   array-designator:
-     [ constant-expression ]
-
-   GNU extensions:
-
-   initializer:
-     { }
-
-   designation:
-     array-designator
-     identifier :
-
-   array-designator:
-     [ constant-expression ... constant-expression ]
-
-   Any expression without commas is accepted in the syntax for the
-   constant-expressions, with non-constant expressions rejected later.
-
-   This function is only used for top-level initializers; for nested
-   ones, see c_parser_initval.  */
 
 static struct c_expr
 c_parser_initializer (c_parser *parser)
@@ -4373,11 +4084,6 @@ c_parser_initializer (c_parser *parser)
 
 location_t last_init_list_comma;
 
-/* Parse a braced initializer list.  TYPE is the type specified for a
-   compound literal, and NULL_TREE for other initializers and for
-   nested braced lists.  NESTED_P is true for nested braced lists,
-   false for the list of a compound literal or the list that is the
-   top-level initializer in a declaration.  */
 
 static struct c_expr
 c_parser_braced_init (c_parser *parser, tree type, bool nested_p,
@@ -4444,9 +4150,7 @@ c_parser_braced_init (c_parser *parser, tree type, bool nested_p,
 static void
 c_parser_initelt (c_parser *parser, struct obstack * braced_init_obstack)
 {
-  /* Parse any designator or designator list.  A single array
-     designator may have the subsequent "=" omitted in GNU C, but a
-     longer list or a structure member designator may not.  */
+
   if (c_parser_next_token_is (parser, CPP_NAME)
       && c_parser_peek_2nd_token (parser)->type == CPP_COLON)
     {
@@ -4463,8 +4167,7 @@ c_parser_initelt (c_parser *parser, struct obstack * braced_init_obstack)
     }
   else
     {
-      /* des_seen is 0 if there have been no designators, 1 if there
-	 has been a single array designator and 2 otherwise.  */
+
       int des_seen = 0;
       /* Location of a designator.  */
       location_t des_loc = UNKNOWN_LOCATION;  /* Quiet warning.  */
@@ -4505,17 +4208,7 @@ c_parser_initelt (c_parser *parser, struct obstack * braced_init_obstack)
 	      tree first, second;
 	      location_t ellipsis_loc = UNKNOWN_LOCATION;  /* Quiet warning.  */
 	      location_t array_index_loc = UNKNOWN_LOCATION;
-	      /* ??? Following the old parser, [ objc-receiver
-		 objc-message-args ] is accepted as an initializer,
-		 being distinguished from a designator by what follows
-		 the first assignment expression inside the square
-		 brackets, but after a first array designator a
-		 subsequent square bracket is for Objective-C taken to
-		 start an expression, using the obsolete form of
-		 designated initializer without '=', rather than
-		 possibly being a second level of designation: in LALR
-		 terms, the '[' is shifted rather than reducing
-		 designator to designator-list.  */
+
 	      if (des_prev == 1 && c_dialect_objc ())
 		{
 		  des_seen = des_prev;
@@ -4523,13 +4216,7 @@ c_parser_initelt (c_parser *parser, struct obstack * braced_init_obstack)
 		}
 	      if (des_prev == 0 && c_dialect_objc ())
 		{
-		  /* This might be an array designator or an
-		     Objective-C message expression.  If the former,
-		     continue parsing here; if the latter, parse the
-		     remainder of the initializer given the starting
-		     primary-expression.  ??? It might make sense to
-		     distinguish when des_prev == 1 as well; see
-		     previous comment.  */
+
 		  tree rec, args;
 		  struct c_expr mexpr;
 		  c_parser_consume_token (parser);
@@ -4550,9 +4237,7 @@ c_parser_initelt (c_parser *parser, struct obstack * braced_init_obstack)
 		  if (c_parser_next_token_is (parser, CPP_ELLIPSIS)
 		      || c_parser_next_token_is (parser, CPP_CLOSE_SQUARE))
 		    goto array_desig_after_first;
-		  /* Expression receiver.  So far only one part
-		     without commas has been parsed; there might be
-		     more of the expression.  */
+
 		  rec = first;
 		  while (c_parser_next_token_is (parser, CPP_COMMA))
 		    {
@@ -4567,7 +4252,7 @@ c_parser_initelt (c_parser *parser, struct obstack * braced_init_obstack)
 		      rec = build_compound_expr (comma_loc, rec, next.value);
 		    }
 		parse_message_args:
-		  /* Now parse the objc-message-args.  */
+
 		  args = c_parser_objc_message_args (parser);
 		  c_parser_skip_until_found (parser, CPP_CLOSE_SQUARE,
 					     "expected %<]%>");
@@ -4575,9 +4260,7 @@ c_parser_initelt (c_parser *parser, struct obstack * braced_init_obstack)
 		    = objc_build_message_expr (rec, args);
 		  mexpr.original_code = ERROR_MARK;
 		  mexpr.original_type = NULL;
-		  /* Now parse and process the remainder of the
-		     initializer, starting with this message
-		     expression as a primary-expression.  */
+
 		  c_parser_initval (parser, &mexpr, braced_init_obstack);
 		  return;
 		}
@@ -4641,11 +4324,7 @@ c_parser_initelt (c_parser *parser, struct obstack * braced_init_obstack)
   c_parser_initval (parser, NULL, braced_init_obstack);
 }
 
-/* Parse a nested initializer; as c_parser_initializer but parses
-   initializers within braced lists, after any designators have been
-   applied.  If AFTER is not NULL then it is an Objective-C message
-   expression which is the primary-expression starting the
-   initializer.  */
+
 
 static void
 c_parser_initval (c_parser *parser, struct c_expr *after,
@@ -4669,70 +4348,7 @@ c_parser_initval (c_parser *parser, struct c_expr *after,
   process_init_element (loc, init, false, braced_init_obstack);
 }
 
-/* Parse a compound statement (possibly a function body) (C90 6.6.2,
-   C99 6.8.2, C11 6.8.2).
 
-   compound-statement:
-     { block-item-list[opt] }
-     { label-declarations block-item-list }
-
-   block-item-list:
-     block-item
-     block-item-list block-item
-
-   block-item:
-     nested-declaration
-     statement
-
-   nested-declaration:
-     declaration
-
-   GNU extensions:
-
-   compound-statement:
-     { label-declarations block-item-list }
-
-   nested-declaration:
-     __extension__ nested-declaration
-     nested-function-definition
-
-   label-declarations:
-     label-declaration
-     label-declarations label-declaration
-
-   label-declaration:
-     __label__ identifier-list ;
-
-   Allowing the mixing of declarations and code is new in C99.  The
-   GNU syntax also permits (not shown above) labels at the end of
-   compound statements, which yield an error.  We don't allow labels
-   on declarations; this might seem like a natural extension, but
-   there would be a conflict between attributes on the label and
-   prefix attributes on the declaration.  ??? The syntax follows the
-   old parser in requiring something after label declarations.
-   Although they are erroneous if the labels declared aren't defined,
-   is it useful for the syntax to be this way?
-
-   OpenACC:
-
-   block-item:
-     openacc-directive
-
-   openacc-directive:
-     update-directive
-
-   OpenMP:
-
-   block-item:
-     openmp-directive
-
-   openmp-directive:
-     barrier-directive
-     flush-directive
-     taskwait-directive
-     taskyield-directive
-     cancel-directive
-     cancellation-point-directive  */
 
 static tree
 c_parser_compound_statement (c_parser *parser)
@@ -4757,9 +4373,6 @@ c_parser_compound_statement (c_parser *parser)
   return c_end_compound_stmt (brace_loc, stmt, true);
 }
 
-/* Parse a compound statement except for the opening brace.  This is
-   used for parsing both compound statements and statement expressions
-   (which follow different paths to handling the opening).  */
 
 static void
 c_parser_compound_statement_nostart (c_parser *parser)
@@ -4776,8 +4389,6 @@ c_parser_compound_statement_nostart (c_parser *parser)
   mark_valid_location_for_stdc_pragma (true);
   if (c_parser_next_token_is_keyword (parser, RID_LABEL))
     {
-      /* Read zero or more forward-declarations for labels that nested
-	 functions can jump to.  */
       mark_valid_location_for_stdc_pragma (false);
       while (c_parser_next_token_is_keyword (parser, RID_LABEL))
 	{
@@ -4807,7 +4418,7 @@ c_parser_compound_statement_nostart (c_parser *parser)
 	}
       pedwarn (label_loc, OPT_Wpedantic, "ISO C forbids label declarations");
     }
-  /* We must now have at least one statement, label or declaration.  */
+
   if (c_parser_next_token_is (parser, CPP_CLOSE_BRACE))
     {
       mark_valid_location_for_stdc_pragma (save_valid_for_pragma);
@@ -4849,10 +4460,7 @@ c_parser_compound_statement_nostart (c_parser *parser)
       else if (!last_label
 	       && c_parser_next_token_is_keyword (parser, RID_EXTENSION))
 	{
-	  /* __extension__ can start a declaration, but is also an
-	     unary operator that can start an expression.  Consume all
-	     but the last of a possible series of __extension__ to
-	     determine which.  */
+
 	  while (c_parser_peek_2nd_token (parser)->type == CPP_KEYWORD
 		 && (c_parser_peek_2nd_token (parser)->keyword
 		     == RID_EXTENSION))
@@ -4879,11 +4487,7 @@ c_parser_compound_statement_nostart (c_parser *parser)
 	}
       else if (c_parser_next_token_is (parser, CPP_PRAGMA))
 	{
-	  /* External pragmas, and some omp pragmas, are not associated
-	     with regular c code, and so are not to be considered statements
-	     syntactically.  This ensures that the user doesn't put them
-	     places that would turn into syntax errors if the directive
-	     were ignored.  */
+
 	  if (c_parser_pragma (parser,
 			       last_label ? pragma_stmt : pragma_compound,
 			       NULL))
@@ -4940,21 +4544,7 @@ c_parser_all_labels (c_parser *parser)
     c_parser_label (parser);
 }
 
-/* Parse a label (C90 6.6.1, C99 6.8.1, C11 6.8.1).
 
-   label:
-     identifier : attributes[opt]
-     case constant-expression :
-     default :
-
-   GNU extensions:
-
-   label:
-     case constant-expression ... constant-expression :
-
-   The use of attributes on labels is a GNU extension.  The syntax in
-   GNU C accepts any expressions without commas, non-constant
-   expressions being rejected later.  */
 
 static void
 c_parser_label (c_parser *parser)
@@ -5053,150 +4643,7 @@ c_parser_label (c_parser *parser)
     }
 }
 
-/* Parse a statement (C90 6.6, C99 6.8, C11 6.8).
 
-   statement:
-     labeled-statement
-     compound-statement
-     expression-statement
-     selection-statement
-     iteration-statement
-     jump-statement
-
-   labeled-statement:
-     label statement
-
-   expression-statement:
-     expression[opt] ;
-
-   selection-statement:
-     if-statement
-     switch-statement
-
-   iteration-statement:
-     while-statement
-     do-statement
-     for-statement
-
-   jump-statement:
-     goto identifier ;
-     continue ;
-     break ;
-     return expression[opt] ;
-
-   GNU extensions:
-
-   statement:
-     asm-statement
-
-   jump-statement:
-     goto * expression ;
-
-   expression-statement:
-     attributes ;
-
-   Objective-C:
-
-   statement:
-     objc-throw-statement
-     objc-try-catch-statement
-     objc-synchronized-statement
-
-   objc-throw-statement:
-     @throw expression ;
-     @throw ;
-
-   OpenACC:
-
-   statement:
-     openacc-construct
-
-   openacc-construct:
-     parallel-construct
-     kernels-construct
-     data-construct
-     loop-construct
-
-   parallel-construct:
-     parallel-directive structured-block
-
-   kernels-construct:
-     kernels-directive structured-block
-
-   data-construct:
-     data-directive structured-block
-
-   loop-construct:
-     loop-directive structured-block
-
-   OpenMP:
-
-   statement:
-     openmp-construct
-
-   openmp-construct:
-     parallel-construct
-     for-construct
-     simd-construct
-     for-simd-construct
-     sections-construct
-     single-construct
-     parallel-for-construct
-     parallel-for-simd-construct
-     parallel-sections-construct
-     master-construct
-     critical-construct
-     atomic-construct
-     ordered-construct
-
-   parallel-construct:
-     parallel-directive structured-block
-
-   for-construct:
-     for-directive iteration-statement
-
-   simd-construct:
-     simd-directive iteration-statements
-
-   for-simd-construct:
-     for-simd-directive iteration-statements
-
-   sections-construct:
-     sections-directive section-scope
-
-   single-construct:
-     single-directive structured-block
-
-   parallel-for-construct:
-     parallel-for-directive iteration-statement
-
-   parallel-for-simd-construct:
-     parallel-for-simd-directive iteration-statement
-
-   parallel-sections-construct:
-     parallel-sections-directive section-scope
-
-   master-construct:
-     master-directive structured-block
-
-   critical-construct:
-     critical-directive structured-block
-
-   atomic-construct:
-     atomic-directive expression-statement
-
-   ordered-construct:
-     ordered-directive structured-block
-
-   Transactional Memory:
-
-   statement:
-     transaction-statement
-     transaction-cancel-statement
-
-   IF_P is used to track whether there's a (possibly labeled) if statement
-   which is not enclosed in braces and has an else clause.  This is used to
-   implement -Wparentheses.  */
 
 static void
 c_parser_statement (c_parser *parser, bool *if_p)
@@ -5390,10 +4837,7 @@ c_parser_statement_after_labels (c_parser *parser, bool *if_p,
       break;
     case CPP_CLOSE_PAREN:
     case CPP_CLOSE_SQUARE:
-      /* Avoid infinite loop in error recovery:
-	 c_parser_skip_until_found stops at a closing nesting
-	 delimiter without consuming it, but here we need to consume
-	 it to proceed further.  */
+
       c_parser_error (parser, "expected statement");
       c_parser_consume_token (parser);
       break;
@@ -5407,16 +4851,7 @@ c_parser_statement_after_labels (c_parser *parser, bool *if_p,
       c_parser_skip_until_found (parser, CPP_SEMICOLON, "expected %<;%>");
       break;
     }
-  /* Two cases cannot and do not have line numbers associated: If stmt
-     is degenerate, such as "2;", then stmt is an INTEGER_CST, which
-     cannot hold line numbers.  But that's OK because the statement
-     will either be changed to a MODIFY_EXPR during gimplification of
-     the statement expr, or discarded.  If stmt was compound, but
-     without new variables, we will have skipped the creation of a
-     BIND and will have a bare STATEMENT_LIST.  But that's OK because
-     (recursively) all of the component statements should already have
-     line numbers assigned.  ??? Can we discard no-op statements
-     earlier?  */
+
   if (EXPR_LOCATION (stmt) == UNKNOWN_LOCATION)
     protected_set_expr_location (stmt, loc);
 
@@ -5438,11 +4873,6 @@ c_parser_condition (c_parser *parser)
   return cond;
 }
 
-/* Parse a parenthesized condition from an if, do or while statement.
-
-   condition:
-     ( expression )
-*/
 static tree
 c_parser_paren_condition (c_parser *parser)
 {
@@ -5454,11 +4884,7 @@ c_parser_paren_condition (c_parser *parser)
   return cond;
 }
 
-/* Parse a statement which is a block in C99.
 
-   IF_P is used to track whether there's a (possibly labeled) if statement
-   which is not enclosed in braces and has an else clause.  This is used to
-   implement -Wparentheses.  */
 
 static tree
 c_parser_c99_block_statement (c_parser *parser, bool *if_p)
@@ -5469,17 +4895,7 @@ c_parser_c99_block_statement (c_parser *parser, bool *if_p)
   return c_end_compound_stmt (loc, block, flag_isoc99);
 }
 
-/* Parse the body of an if statement.  This is just parsing a
-   statement but (a) it is a block in C99, (b) we track whether the
-   body is an if statement for the sake of -Wparentheses warnings, (c)
-   we handle an empty body specially for the sake of -Wempty-body
-   warnings, and (d) we call parser_compound_statement directly
-   because c_parser_statement_after_labels resets
-   parser->in_if_block.
 
-   IF_P is used to track whether there's a (possibly labeled) if statement
-   which is not enclosed in braces and has an else clause.  This is used to
-   implement -Wparentheses.  */
 
 static tree
 c_parser_if_body (c_parser *parser, bool *if_p,
@@ -5512,10 +4928,7 @@ c_parser_if_body (c_parser *parser, bool *if_p,
   return c_end_compound_stmt (body_loc, block, flag_isoc99);
 }
 
-/* Parse the else body of an if statement.  This is just parsing a
-   statement but (a) it is a block in C99, (b) we handle an empty body
-   specially for the sake of -Wempty-body warnings.  CHAIN is a vector
-   of if-else-if conditions.  */
+
 
 static tree
 c_parser_else_body (c_parser *parser, const token_indent_info &else_tinfo,
@@ -5546,9 +4959,6 @@ c_parser_else_body (c_parser *parser, const token_indent_info &else_tinfo,
   return c_end_compound_stmt (body_loc, block, flag_isoc99);
 }
 
-/* We might need to reclassify any previously-lexed identifier, e.g.
-   when we've left a for loop with an if-statement without else in the
-   body - we might have used a wrong scope for the token.  See PR67784.  */
 
 static void
 c_parser_maybe_reclassify_token (c_parser *parser)
@@ -5570,9 +4980,7 @@ c_parser_maybe_reclassify_token (c_parser *parser)
 	  else if (c_dialect_objc ())
 	    {
 	      tree objc_interface_decl = objc_is_class_name (token->value);
-	      /* Objective-C class names are in the same namespace as
-		 variables and typedefs, and hence are shadowed by local
-		 declarations.  */
+
 	      if (objc_interface_decl)
 		{
 		  token->value = objc_interface_decl;
@@ -5583,16 +4991,7 @@ c_parser_maybe_reclassify_token (c_parser *parser)
     }
 }
 
-/* Parse an if statement (C90 6.6.4, C99 6.8.4, C11 6.8.4).
 
-   if-statement:
-     if ( expression ) statement
-     if ( expression ) statement else statement
-
-   CHAIN is a vector of if-else-if conditions.
-   IF_P is used to track whether there's a (possibly labeled) if statement
-   which is not enclosed in braces and has an else clause.  This is used to
-   implement -Wparentheses.  */
 
 static void
 c_parser_if_statement (c_parser *parser, bool *if_p, vec<tree> *chain)
@@ -5643,16 +5042,13 @@ c_parser_if_statement (c_parser *parser, bool *if_p, vec<tree> *chain)
 	    }
 	  else if (!c_parser_next_token_is_keyword (parser, RID_IF))
 	    {
-	      /* This is if-else without subsequent if.  Zap the condition
-		 chain; we would have already warned at this point.  */
+
 	      delete chain;
 	      chain = NULL;
 	    }
 	}
       second_body = c_parser_else_body (parser, else_tinfo, chain);
-      /* Set IF_P to true to indicate that this if statement has an
-	 else clause.  This may trigger the Wparentheses warning
-	 below when we get back up to the parent if statement.  */
+
       if (if_p != NULL)
 	*if_p = true;
     }
@@ -5660,16 +5056,14 @@ c_parser_if_statement (c_parser *parser, bool *if_p, vec<tree> *chain)
     {
       second_body = NULL_TREE;
 
-      /* Diagnose an ambiguous else if if-then-else is nested inside
-	 if-then.  */
+
       if (nested_if)
 	warning_at (loc, OPT_Wdangling_else,
 		    "suggest explicit braces to avoid ambiguous %<else%>");
 
       if (warn_duplicated_cond)
 	{
-	  /* This if statement does not have an else clause.  We don't
-	     need the condition chain anymore.  */
+
 	  delete chain;
 	  chain = NULL;
 	}
@@ -5684,11 +5078,7 @@ c_parser_if_statement (c_parser *parser, bool *if_p, vec<tree> *chain)
   c_parser_maybe_reclassify_token (parser);
 }
 
-/* Parse a switch statement (C90 6.6.4, C99 6.8.4, C11 6.8.4).
 
-   switch-statement:
-     switch (expression) statement
-*/
 
 static void
 c_parser_switch_statement (c_parser *parser, bool *if_p)
@@ -5741,14 +5131,7 @@ c_parser_switch_statement (c_parser *parser, bool *if_p)
   c_parser_maybe_reclassify_token (parser);
 }
 
-/* Parse a while statement (C90 6.6.5, C99 6.8.5, C11 6.8.5).
 
-   while-statement:
-      while (expression) statement
-
-   IF_P is used to track whether there's a (possibly labeled) if statement
-   which is not enclosed in braces and has an else clause.  This is used to
-   implement -Wparentheses.  */
 
 static void
 c_parser_while_statement (c_parser *parser, bool ivdep, bool *if_p)
@@ -5791,11 +5174,7 @@ c_parser_while_statement (c_parser *parser, bool ivdep, bool *if_p)
   c_cont_label = save_cont;
 }
 
-/* Parse a do statement (C90 6.6.5, C99 6.8.5, C11 6.8.5).
 
-   do-statement:
-     do statement while ( expression ) ;
-*/
 
 static void
 c_parser_do_statement (c_parser *parser, bool ivdep)
@@ -5835,64 +5214,7 @@ c_parser_do_statement (c_parser *parser, bool ivdep)
   add_stmt (c_end_compound_stmt (loc, block, flag_isoc99));
 }
 
-/* Parse a for statement (C90 6.6.5, C99 6.8.5, C11 6.8.5).
 
-   for-statement:
-     for ( expression[opt] ; expression[opt] ; expression[opt] ) statement
-     for ( nested-declaration expression[opt] ; expression[opt] ) statement
-
-   The form with a declaration is new in C99.
-
-   ??? In accordance with the old parser, the declaration may be a
-   nested function, which is then rejected in check_for_loop_decls,
-   but does it make any sense for this to be included in the grammar?
-   Note in particular that the nested function does not include a
-   trailing ';', whereas the "declaration" production includes one.
-   Also, can we reject bad declarations earlier and cheaper than
-   check_for_loop_decls?
-
-   In Objective-C, there are two additional variants:
-
-   foreach-statement:
-     for ( expression in expresssion ) statement
-     for ( declaration in expression ) statement
-
-   This is inconsistent with C, because the second variant is allowed
-   even if c99 is not enabled.
-
-   The rest of the comment documents these Objective-C foreach-statement.
-
-   Here is the canonical example of the first variant:
-    for (object in array)    { do something with object }
-   we call the first expression ("object") the "object_expression" and 
-   the second expression ("array") the "collection_expression".
-   object_expression must be an lvalue of type "id" (a generic Objective-C
-   object) because the loop works by assigning to object_expression the
-   various objects from the collection_expression.  collection_expression
-   must evaluate to something of type "id" which responds to the method
-   countByEnumeratingWithState:objects:count:.
-
-   The canonical example of the second variant is:
-    for (id object in array)    { do something with object }
-   which is completely equivalent to
-    {
-      id object;
-      for (object in array) { do something with object }
-    }
-   Note that initizializing 'object' in some way (eg, "for ((object =
-   xxx) in array) { do something with object }") is possibly
-   technically valid, but completely pointless as 'object' will be
-   assigned to something else as soon as the loop starts.  We should
-   most likely reject it (TODO).
-
-   The beginning of the Objective-C foreach-statement looks exactly
-   like the beginning of the for-statement, and we can tell it is a
-   foreach-statement only because the initial declaration or
-   expression is terminated by 'in' instead of ';'.
-
-   IF_P is used to track whether there's a (possibly labeled) if statement
-   which is not enclosed in braces and has an else clause.  This is used to
-   implement -Wparentheses.  */
 
 static void
 c_parser_for_statement (c_parser *parser, bool ivdep, bool *if_p)
@@ -5943,10 +5265,7 @@ c_parser_for_statement (c_parser *parser, bool ivdep, bool *if_p)
 	}
       else if (c_parser_next_token_is_keyword (parser, RID_EXTENSION))
 	{
-	  /* __extension__ can start a declaration, but is also an
-	     unary operator that can start an expression.  Consume all
-	     but the last of a possible series of __extension__ to
-	     determine which.  */
+
 	  while (c_parser_peek_2nd_token (parser)->type == CPP_KEYWORD
 		 && (c_parser_peek_2nd_token (parser)->keyword
 		     == RID_EXTENSION))
@@ -5981,8 +5300,7 @@ c_parser_for_statement (c_parser *parser, bool ivdep, bool *if_p)
 	    struct c_expr ce;
 	    tree init_expression;
 	    ce = c_parser_expression (parser);
-	    /* In theory we could forbid _Cilk_spawn here, as the spec says "only in top
-	       level statement", but it works just fine, so allow it.  */
+
 	    init_expression = ce.value;
 	    parser->objc_could_be_foreach_context = false;
 	    if (c_parser_next_token_is_keyword (parser, RID_IN))
@@ -6036,9 +5354,7 @@ c_parser_for_statement (c_parser *parser, bool ivdep, bool *if_p)
 			   build_int_cst (integer_type_node,
 			   annot_expr_ivdep_kind));
 	}
-      /* Parse the increment expression (the third expression in a
-	 for-statement).  In the case of a foreach-statement, this is
-	 the expression that follows the 'in'.  */
+
       if (c_parser_next_token_is (parser, CPP_CLOSE_PAREN))
 	{
 	  if (is_foreach_statement)
@@ -6088,26 +5404,7 @@ c_parser_for_statement (c_parser *parser, bool ivdep, bool *if_p)
   c_cont_label = save_cont;
 }
 
-/* Parse an asm statement, a GNU extension.  This is a full-blown asm
-   statement with inputs, outputs, clobbers, and volatile tag
-   allowed.
 
-   asm-statement:
-     asm type-qualifier[opt] ( asm-argument ) ;
-     asm type-qualifier[opt] goto ( asm-goto-argument ) ;
-
-   asm-argument:
-     asm-string-literal
-     asm-string-literal : asm-operands[opt]
-     asm-string-literal : asm-operands[opt] : asm-operands[opt]
-     asm-string-literal : asm-operands[opt] : asm-operands[opt] : asm-clobbers[opt]
-
-   asm-goto-argument:
-     asm-string-literal : : asm-operands[opt] : asm-clobbers[opt] \
-       : asm-goto-operands
-
-   Qualifiers other than volatile are accepted in the syntax but
-   warned for.  */
 
 static tree
 c_parser_asm_statement (c_parser *parser)
@@ -6144,8 +5441,7 @@ c_parser_asm_statement (c_parser *parser)
       is_goto = true;
     }
 
-  /* ??? Follow the C++ parser rather than using the
-     lex_untranslated_string kludge.  */
+
   parser->lex_untranslated_string = true;
   ret = NULL;
 
@@ -6228,16 +5524,7 @@ c_parser_asm_statement (c_parser *parser)
   goto error;
 }
 
-/* Parse asm operands, a GNU extension.
 
-   asm-operands:
-     asm-operand
-     asm-operands , asm-operand
-
-   asm-operand:
-     asm-string-literal ( expression )
-     [ identifier ] asm-string-literal ( expression )
-*/
 
 static tree
 c_parser_asm_operands (c_parser *parser)
@@ -6295,12 +5582,6 @@ c_parser_asm_operands (c_parser *parser)
   return list;
 }
 
-/* Parse asm clobbers, a GNU extension.
-
-   asm-clobbers:
-     asm-string-literal
-     asm-clobbers , asm-string-literal
-*/
 
 static tree
 c_parser_asm_clobbers (c_parser *parser)
@@ -6321,12 +5602,6 @@ c_parser_asm_clobbers (c_parser *parser)
   return list;
 }
 
-/* Parse asm goto labels, a GNU extension.
-
-   asm-goto-operands:
-     identifier
-     asm-goto-operands , identifier
-*/
 
 static tree
 c_parser_asm_goto_operands (c_parser *parser)
@@ -6360,21 +5635,7 @@ c_parser_asm_goto_operands (c_parser *parser)
     }
 }
 
-/* Parse an expression other than a compound expression; that is, an
-   assignment expression (C90 6.3.16, C99 6.5.16, C11 6.5.16).  If
-   AFTER is not NULL then it is an Objective-C message expression which
-   is the primary-expression starting the expression as an initializer.
 
-   assignment-expression:
-     conditional-expression
-     unary-expression assignment-operator assignment-expression
-
-   assignment-operator: one of
-     = *= /= %= += -= <<= >>= &= ^= |=
-
-   In GNU C we accept any conditional expression on the LHS and
-   diagnose the invalid lvalue rather than producing a syntax
-   error.  */
 
 static struct c_expr
 c_parser_expr_no_commas (c_parser *parser, struct c_expr *after,
@@ -6444,19 +5705,7 @@ c_parser_expr_no_commas (c_parser *parser, struct c_expr *after,
   return ret;
 }
 
-/* Parse a conditional expression (C90 6.3.15, C99 6.5.15, C11 6.5.15).  If
-   AFTER is not NULL then it is an Objective-C message expression which is
-   the primary-expression starting the expression as an initializer.
 
-   conditional-expression:
-     logical-OR-expression
-     logical-OR-expression ? expression : conditional-expression
-
-   GNU extensions:
-
-   conditional-expression:
-     logical-OR-expression ? : conditional-expression
-*/
 
 static struct c_expr
 c_parser_conditional_expression (c_parser *parser, struct c_expr *after,
@@ -6541,9 +5790,7 @@ c_parser_conditional_expression (c_parser *parser, struct c_expr *after,
     {
       tree t1, t2;
 
-      /* If both sides are enum type, the default conversion will have
-	 made the type of the result be an integer type.  We want to
-	 remember the enum types we started with.  */
+
       t1 = exp1.original_type ? exp1.original_type : TREE_TYPE (exp1.value);
       t2 = exp2.original_type ? exp2.original_type : TREE_TYPE (exp2.value);
       ret.original_type = ((t1 != error_mark_node
@@ -6557,90 +5804,13 @@ c_parser_conditional_expression (c_parser *parser, struct c_expr *after,
   return ret;
 }
 
-/* Parse a binary expression; that is, a logical-OR-expression (C90
-   6.3.5-6.3.14, C99 6.5.5-6.5.14, C11 6.5.5-6.5.14).  If AFTER is not
-   NULL then it is an Objective-C message expression which is the
-   primary-expression starting the expression as an initializer.
 
-   OMP_ATOMIC_LHS is NULL, unless parsing OpenMP #pragma omp atomic,
-   when it should be the unfolded lhs.  In a valid OpenMP source,
-   one of the operands of the toplevel binary expression must be equal
-   to it.  In that case, just return a build2 created binary operation
-   rather than result of parser_build_binary_op.
-
-   multiplicative-expression:
-     cast-expression
-     multiplicative-expression * cast-expression
-     multiplicative-expression / cast-expression
-     multiplicative-expression % cast-expression
-
-   additive-expression:
-     multiplicative-expression
-     additive-expression + multiplicative-expression
-     additive-expression - multiplicative-expression
-
-   shift-expression:
-     additive-expression
-     shift-expression << additive-expression
-     shift-expression >> additive-expression
-
-   relational-expression:
-     shift-expression
-     relational-expression < shift-expression
-     relational-expression > shift-expression
-     relational-expression <= shift-expression
-     relational-expression >= shift-expression
-
-   equality-expression:
-     relational-expression
-     equality-expression == relational-expression
-     equality-expression != relational-expression
-
-   AND-expression:
-     equality-expression
-     AND-expression & equality-expression
-
-   exclusive-OR-expression:
-     AND-expression
-     exclusive-OR-expression ^ AND-expression
-
-   inclusive-OR-expression:
-     exclusive-OR-expression
-     inclusive-OR-expression | exclusive-OR-expression
-
-   logical-AND-expression:
-     inclusive-OR-expression
-     logical-AND-expression && inclusive-OR-expression
-
-   logical-OR-expression:
-     logical-AND-expression
-     logical-OR-expression || logical-AND-expression
-*/
 
 static struct c_expr
 c_parser_binary_expression (c_parser *parser, struct c_expr *after,
 			    tree omp_atomic_lhs)
 {
-  /* A binary expression is parsed using operator-precedence parsing,
-     with the operands being cast expressions.  All the binary
-     operators are left-associative.  Thus a binary expression is of
-     form:
 
-     E0 op1 E1 op2 E2 ...
-
-     which we represent on a stack.  On the stack, the precedence
-     levels are strictly increasing.  When a new operator is
-     encountered of higher precedence than that at the top of the
-     stack, it is pushed; its LHS is the top expression, and its RHS
-     is everything parsed until it is popped.  When a new operator is
-     encountered with precedence less than or equal to that at the top
-     of the stack, triples E[i-1] op[i] E[i] are popped and replaced
-     by the result of the operation until the operator at the top of
-     the stack has lower precedence than the new operator or there is
-     only one element on the stack; then the top expression is the LHS
-     of the new operator.  In the case of logical AND and OR
-     expressions, we also need to adjust c_inhibit_evaluation_warnings
-     as appropriate when the operators are pushed and popped.  */
 
   struct {
     /* The expression at this stack level.  */
@@ -6832,14 +6002,7 @@ c_parser_binary_expression (c_parser *parser, struct c_expr *after,
 #undef POP
 }
 
-/* Parse a cast expression (C90 6.3.4, C99 6.5.4, C11 6.5.4).  If AFTER
-   is not NULL then it is an Objective-C message expression which is the
-   primary-expression starting the expression as an initializer.
 
-   cast-expression:
-     unary-expression
-     ( type-name ) unary-expression
-*/
 
 static struct c_expr
 c_parser_cast_expression (c_parser *parser, struct c_expr *after)
@@ -6893,39 +6056,6 @@ c_parser_cast_expression (c_parser *parser, struct c_expr *after)
     return c_parser_unary_expression (parser);
 }
 
-/* Parse an unary expression (C90 6.3.3, C99 6.5.3, C11 6.5.3).
-
-   unary-expression:
-     postfix-expression
-     ++ unary-expression
-     -- unary-expression
-     unary-operator cast-expression
-     sizeof unary-expression
-     sizeof ( type-name )
-
-   unary-operator: one of
-     & * + - ~ !
-
-   GNU extensions:
-
-   unary-expression:
-     __alignof__ unary-expression
-     __alignof__ ( type-name )
-     && identifier
-
-   (C11 permits _Alignof with type names only.)
-
-   unary-operator: one of
-     __extension__ __real__ __imag__
-
-   Transactional Memory:
-
-   unary-expression:
-     transaction-expression
-
-   In addition, the GNU syntax treats ++ and -- as unary operators, so
-   they may be applied to cast expressions with errors for non-lvalues
-   given later.  */
 
 static struct c_expr
 c_parser_unary_expression (c_parser *parser)
@@ -7166,8 +6296,7 @@ c_parser_alignof_expression (c_parser *parser)
   if (c_parser_next_token_is (parser, CPP_OPEN_PAREN)
       && c_token_starts_typename (c_parser_peek_2nd_token (parser)))
     {
-      /* Either __alignof__ ( type-name ) or __alignof__
-	 unary-expression starting with a compound literal.  */
+
       location_t loc;
       struct c_type_name *type_name;
       struct c_expr ret;
@@ -7225,13 +6354,7 @@ c_parser_alignof_expression (c_parser *parser)
     }
 }
 
-/* Helper function to read arguments of builtins which are interfaces
-   for the middle-end nodes like COMPLEX_EXPR, VEC_PERM_EXPR and
-   others.  The name of the builtin is passed using BNAME parameter.
-   Function returns true if there were no errors while parsing and
-   stores the arguments in CEXPR_LIST.  If it returns true,
-   *OUT_CLOSE_PAREN_LOC is written to with the location of the closing
-   parenthesis.  */
+
 static bool
 c_parser_get_builtin_args (c_parser *parser, const char *bname,
 			   vec<c_expr_t, va_gc> **ret_cexpr_list,
@@ -7294,20 +6417,6 @@ struct c_generic_association
   struct c_expr expression;
 };
 
-/* Parse a generic-selection.  (C11 6.5.1.1).
-   
-   generic-selection:
-     _Generic ( assignment-expression , generic-assoc-list )
-     
-   generic-assoc-list:
-     generic-association
-     generic-assoc-list , generic-association
-   
-   generic-association:
-     type-name : assignment-expression
-     default : assignment-expression
-*/
-
 static struct c_expr
 c_parser_generic_selection (c_parser *parser)
 {
@@ -7349,8 +6458,7 @@ c_parser_generic_selection (c_parser *parser)
       return selector;
     }
   selector_type = TREE_TYPE (selector.value);
-  /* In ISO C terms, rvalues (including the controlling expression of
-     _Generic) do not have qualified types.  */
+
   if (TREE_CODE (selector_type) != ARRAY_TYPE)
     selector_type = TYPE_MAIN_VARIANT (selector_type);
   /* In ISO C terms, _Noreturn is not part of the type of expressions
@@ -7493,66 +6601,7 @@ c_parser_generic_selection (c_parser *parser)
   return matched_assoc.expression;
 }
 
-/* Parse a postfix expression (C90 6.3.1-6.3.2, C99 6.5.1-6.5.2,
-   C11 6.5.1-6.5.2).
 
-   postfix-expression:
-     primary-expression
-     postfix-expression [ expression ]
-     postfix-expression ( argument-expression-list[opt] )
-     postfix-expression . identifier
-     postfix-expression -> identifier
-     postfix-expression ++
-     postfix-expression --
-     ( type-name ) { initializer-list }
-     ( type-name ) { initializer-list , }
-
-   argument-expression-list:
-     argument-expression
-     argument-expression-list , argument-expression
-
-   primary-expression:
-     identifier
-     constant
-     string-literal
-     ( expression )
-     generic-selection
-
-   GNU extensions:
-
-   primary-expression:
-     __func__
-       (treated as a keyword in GNU C)
-     __FUNCTION__
-     __PRETTY_FUNCTION__
-     ( compound-statement )
-     __builtin_va_arg ( assignment-expression , type-name )
-     __builtin_offsetof ( type-name , offsetof-member-designator )
-     __builtin_choose_expr ( assignment-expression ,
-			     assignment-expression ,
-			     assignment-expression )
-     __builtin_types_compatible_p ( type-name , type-name )
-     __builtin_complex ( assignment-expression , assignment-expression )
-     __builtin_shuffle ( assignment-expression , assignment-expression )
-     __builtin_shuffle ( assignment-expression , 
-			 assignment-expression ,
-			 assignment-expression, )
-
-   offsetof-member-designator:
-     identifier
-     offsetof-member-designator . identifier
-     offsetof-member-designator [ expression ]
-
-   Objective-C:
-
-   primary-expression:
-     [ objc-receiver objc-message-args ]
-     @selector ( objc-selector-arg )
-     @protocol ( identifier )
-     @encode ( type-name )
-     objc-string-literal
-     Classname . identifier
-*/
 
 static struct c_expr
 c_parser_postfix_expression (c_parser *parser)
@@ -7687,10 +6736,7 @@ c_parser_postfix_expression (c_parser *parser)
 	}
       else if (c_token_starts_typename (c_parser_peek_2nd_token (parser)))
 	{
-	  /* A compound literal.  ??? Can we actually get here rather
-	     than going directly to
-	     c_parser_postfix_expression_after_paren_type from
-	     elsewhere?  */
+
 	  location_t loc;
 	  struct c_type_name *type_name;
 	  c_parser_consume_token (parser);
@@ -8250,15 +7296,7 @@ c_parser_postfix_expression (c_parser *parser)
     (parser, EXPR_LOC_OR_LOC (expr.value, loc), expr);
 }
 
-/* Parse a postfix expression after a parenthesized type name: the
-   brace-enclosed initializer of a compound literal, possibly followed
-   by some postfix operators.  This is separate because it is not
-   possible to tell until after the type name whether a cast
-   expression has a cast or a compound literal, or whether the operand
-   of sizeof is a parenthesized type name or starts with a compound
-   literal.  TYPE_LOC is the location where TYPE_NAME starts--the
-   location of the first token after the parentheses around the type
-   name.  */
+
 
 static struct c_expr
 c_parser_postfix_expression_after_paren_type (c_parser *parser,
@@ -8331,10 +7369,7 @@ sizeof_ptr_memacc_comptypes (tree type1, tree type2)
   return comptypes (type1, type2) == 1;
 }
 
-/* Parse a postfix expression after the initial primary or compound
-   literal; that is, parse a series of postfix operators.
 
-   EXPR_LOC is the location of the primary expression.  */
 
 static struct c_expr
 c_parser_postfix_expression_after_primary (c_parser *parser,
@@ -8371,15 +7406,8 @@ c_parser_postfix_expression_after_primary (c_parser *parser,
 	  else
 	    {	      
 	      idx = c_parser_expression (parser).value;
-	      /* Here we have 3 options:
-		 1. Array [EXPR] -- Normal Array call.
-		 2. Array [EXPR : EXPR] -- Array notation without stride.
-		 3. Array [EXPR : EXPR : EXPR] -- Array notation with stride.
 
-		 For 1, we just handle it just like a normal array expression.
-		 For 2 and 3 we handle it like we handle array notations.  The
-		 idx value we have above becomes the initial/start index.
-	      */
+
 	      if (flag_cilkplus
 		  && c_parser_peek_token (parser)->type == CPP_COLON)
 		expr.value = c_parser_array_notation (expr_loc, parser, idx, 
@@ -8573,12 +7601,6 @@ c_parser_postfix_expression_after_primary (c_parser *parser,
     }
 }
 
-/* Parse an expression (C90 6.3.17, C99 6.5.17, C11 6.5.17).
-
-   expression:
-     assignment-expression
-     expression , assignment-expression
-*/
 
 static struct c_expr
 c_parser_expression (c_parser *parser)
@@ -8610,8 +7632,6 @@ c_parser_expression (c_parser *parser)
   return expr;
 }
 
-/* Parse an expression and convert functions or arrays to pointers and
-   lvalues to rvalues.  */
 
 static struct c_expr
 c_parser_expression_conv (c_parser *parser)
@@ -8622,9 +7642,6 @@ c_parser_expression_conv (c_parser *parser)
   expr = convert_lvalue_to_rvalue (loc, expr, true, false);
   return expr;
 }
-
-/* Helper function of c_parser_expr_list.  Check if IDXth (0 based)
-   argument is a literal zero alone and if so, set it in literal_zero_mask.  */
 
 static inline void
 c_parser_check_literal_zero (c_parser *parser, unsigned *literal_zero_mask,
@@ -8653,15 +7670,7 @@ c_parser_check_literal_zero (c_parser *parser, unsigned *literal_zero_mask,
     }
 }
 
-/* Parse a non-empty list of expressions.  If CONVERT_P, convert
-   functions and arrays to pointers and lvalues to rvalues.  If
-   FOLD_P, fold the expressions.  If LOCATIONS is non-NULL, save the
-   locations of function arguments into this vector.
 
-   nonempty-expr-list:
-     assignment-expression
-     nonempty-expr-list , assignment-expression
-*/
 
 static vec<tree, va_gc> *
 c_parser_expr_list (c_parser *parser, bool convert_p, bool fold_p,
@@ -8740,29 +7749,7 @@ c_parser_expr_list (c_parser *parser, bool convert_p, bool fold_p,
   return ret;
 }
 
-/* Parse Objective-C-specific constructs.  */
 
-/* Parse an objc-class-definition.
-
-   objc-class-definition:
-     @interface identifier objc-superclass[opt] objc-protocol-refs[opt]
-       objc-class-instance-variables[opt] objc-methodprotolist @end
-     @implementation identifier objc-superclass[opt]
-       objc-class-instance-variables[opt]
-     @interface identifier ( identifier ) objc-protocol-refs[opt]
-       objc-methodprotolist @end
-     @interface identifier ( ) objc-protocol-refs[opt]
-       objc-methodprotolist @end
-     @implementation identifier ( identifier )
-
-   objc-superclass:
-     : identifier
-
-   "@interface identifier (" must start "@interface identifier (
-   identifier ) ...": objc-methodprotolist in the first production may
-   not start with a parenthesized identifier as a declarator of a data
-   definition with no declaration specifiers if the objc-superclass,
-   objc-protocol-refs and objc-class-instance-variables are omitted.  */
 
 static void
 c_parser_objc_class_definition (c_parser *parser, tree attributes)
@@ -8862,27 +7849,6 @@ c_parser_objc_class_definition (c_parser *parser, tree attributes)
     }
 }
 
-/* Parse objc-class-instance-variables.
-
-   objc-class-instance-variables:
-     { objc-instance-variable-decl-list[opt] }
-
-   objc-instance-variable-decl-list:
-     objc-visibility-spec
-     objc-instance-variable-decl ;
-     ;
-     objc-instance-variable-decl-list objc-visibility-spec
-     objc-instance-variable-decl-list objc-instance-variable-decl ;
-     objc-instance-variable-decl-list ;
-
-   objc-visibility-spec:
-     @private
-     @protected
-     @public
-
-   objc-instance-variable-decl:
-     struct-declaration
-*/
 
 static void
 c_parser_objc_class_instance_variables (c_parser *parser)
@@ -9005,11 +7971,6 @@ c_parser_objc_class_declaration (c_parser *parser)
   c_parser_skip_until_found (parser, CPP_SEMICOLON, "expected %<;%>");
 }
 
-/* Parse an objc-alias-declaration.
-
-   objc-alias-declaration:
-     @compatibility_alias identifier identifier ;
-*/
 
 static void
 c_parser_objc_alias_declaration (c_parser *parser)
@@ -9037,16 +7998,7 @@ c_parser_objc_alias_declaration (c_parser *parser)
   objc_declare_alias (id1, id2);
 }
 
-/* Parse an objc-protocol-definition.
 
-   objc-protocol-definition:
-     @protocol identifier objc-protocol-refs[opt] objc-methodprotolist @end
-     @protocol identifier-list ;
-
-   "@protocol identifier ;" should be resolved as "@protocol
-   identifier-list ;": objc-methodprotolist may not start with a
-   semicolon in the first alternative if objc-protocol-refs are
-   omitted.  */
 
 static void
 c_parser_objc_protocol_definition (c_parser *parser, tree attributes)
@@ -9098,15 +8050,7 @@ c_parser_objc_protocol_definition (c_parser *parser, tree attributes)
     }
 }
 
-/* Parse an objc-method-type.
 
-   objc-method-type:
-     +
-     -
-
-   Return true if it is a class method (+) and false if it is
-   an instance method (-).
-*/
 static inline bool
 c_parser_objc_method_type (c_parser *parser)
 {
@@ -9122,12 +8066,6 @@ c_parser_objc_method_type (c_parser *parser)
       gcc_unreachable ();
     }
 }
-
-/* Parse an objc-method-definition.
-
-   objc-method-definition:
-     objc-method-type objc-method-decl ;[opt] compound-statement
-*/
 
 static void
 c_parser_objc_method_definition (c_parser *parser)
@@ -9161,30 +8099,12 @@ c_parser_objc_method_definition (c_parser *parser)
     }
   else
     {
-      /* This code is executed when we find a method definition
-	 outside of an @implementation context (or invalid for other
-	 reasons).  Parse the method (to keep going) but do not emit
-	 any code.
-      */
+
       c_parser_compound_statement (parser);
     }
 }
 
-/* Parse an objc-methodprotolist.
 
-   objc-methodprotolist:
-     empty
-     objc-methodprotolist objc-methodproto
-     objc-methodprotolist declaration
-     objc-methodprotolist ;
-     @optional
-     @required
-
-   The declaration is a data definition, which may be missing
-   declaration specifiers under the same rules and diagnostics as
-   other data definitions outside functions, and the stray semicolon
-   is diagnosed the same way as a stray semicolon outside a
-   function.  */
 
 static void
 c_parser_objc_methodprotolist (c_parser *parser)
@@ -9231,11 +8151,7 @@ c_parser_objc_methodprotolist (c_parser *parser)
     }
 }
 
-/* Parse an objc-methodproto.
 
-   objc-methodproto:
-     objc-method-type objc-method-decl ;
-*/
 
 static void
 c_parser_objc_methodproto (c_parser *parser)
@@ -9264,11 +8180,6 @@ c_parser_objc_methodproto (c_parser *parser)
   c_parser_skip_until_found (parser, CPP_SEMICOLON, "expected %<;%>");
 }
 
-/* If we are at a position that method attributes may be present, check that 
-   there are not any parsed already (a syntax error) and then collect any 
-   specified at the current location.  Finally, if new attributes were present,
-   check that the next token is legal ( ';' for decls and '{' for defs).  */
-   
 static bool 
 c_parser_objc_maybe_method_attributes (c_parser* parser, tree* attributes)
 {
@@ -9300,36 +8211,7 @@ c_parser_objc_maybe_method_attributes (c_parser* parser, tree* attributes)
   return true;
 }
 
-/* Parse an objc-method-decl.
 
-   objc-method-decl:
-     ( objc-type-name ) objc-selector
-     objc-selector
-     ( objc-type-name ) objc-keyword-selector objc-optparmlist
-     objc-keyword-selector objc-optparmlist
-     attributes
-
-   objc-keyword-selector:
-     objc-keyword-decl
-     objc-keyword-selector objc-keyword-decl
-
-   objc-keyword-decl:
-     objc-selector : ( objc-type-name ) identifier
-     objc-selector : identifier
-     : ( objc-type-name ) identifier
-     : identifier
-
-   objc-optparmlist:
-     objc-optparms objc-optellipsis
-
-   objc-optparms:
-     empty
-     objc-opt-parms , parameter-declaration
-
-   objc-optellipsis:
-     empty
-     , ...
-*/
 
 static tree
 c_parser_objc_method_decl (c_parser *parser, bool is_class_method,
@@ -9349,9 +8231,7 @@ c_parser_objc_method_decl (c_parser *parser, bool is_class_method,
       c_parser_skip_until_found (parser, CPP_CLOSE_PAREN, "expected %<)%>");
     }
   sel = c_parser_objc_selector (parser);
-  /* If there is no selector, or a colon follows, we have an
-     objc-keyword-selector.  If there is a selector, and a colon does
-     not follow, that selector ends the objc-method-decl.  */
+
   if (!sel || c_parser_next_token_is (parser, CPP_COLON))
     {
       tree tsel = sel;
@@ -9427,19 +8307,6 @@ c_parser_objc_method_decl (c_parser *parser, bool is_class_method,
   return objc_build_method_signature (is_class_method, type, sel, parms, ellipsis);
 }
 
-/* Parse an objc-type-name.
-
-   objc-type-name:
-     objc-type-qualifiers[opt] type-name
-     objc-type-qualifiers[opt]
-
-   objc-type-qualifiers:
-     objc-type-qualifier
-     objc-type-qualifiers objc-type-qualifier
-
-   objc-type-qualifier: one of
-     in out inout bycopy byref oneway
-*/
 
 static tree
 c_parser_objc_type_name (c_parser *parser)
@@ -9491,8 +8358,7 @@ c_parser_objc_protocol_refs (c_parser *parser)
   tree list = NULL_TREE;
   gcc_assert (c_parser_next_token_is (parser, CPP_LESS));
   c_parser_consume_token (parser);
-  /* Any identifiers, including those declared as type names, are OK
-     here.  */
+
   while (true)
     {
       tree id;
@@ -9513,24 +8379,7 @@ c_parser_objc_protocol_refs (c_parser *parser)
   return list;
 }
 
-/* Parse an objc-try-catch-finally-statement.
 
-   objc-try-catch-finally-statement:
-     @try compound-statement objc-catch-list[opt]
-     @try compound-statement objc-catch-list[opt] @finally compound-statement
-
-   objc-catch-list:
-     @catch ( objc-catch-parameter-declaration ) compound-statement
-     objc-catch-list @catch ( objc-catch-parameter-declaration ) compound-statement
-
-   objc-catch-parameter-declaration:
-     parameter-declaration
-     '...'
-
-   where '...' is to be interpreted literally, that is, it means CPP_ELLIPSIS.
-
-   PS: This function is identical to cp_parser_objc_try_catch_finally_statement
-   for C++.  Keep them in sync.  */   
 
 static void
 c_parser_objc_try_catch_finally_statement (c_parser *parser)
@@ -9556,11 +8405,7 @@ c_parser_objc_try_catch_finally_statement (c_parser *parser)
 	seen_open_paren = true;
       if (c_parser_next_token_is (parser, CPP_ELLIPSIS))
 	{
-	  /* We have "@catch (...)" (where the '...' are literally
-	     what is in the code).  Skip the '...'.
-	     parameter_declaration is set to NULL_TREE, and
-	     objc_being_catch_clauses() knows that that means
-	     '...'.  */
+
 	  c_parser_consume_token (parser);
 	  parameter_declaration = NULL_TREE;
 	}
@@ -9578,21 +8423,11 @@ c_parser_objc_try_catch_finally_statement (c_parser *parser)
 	c_parser_require (parser, CPP_CLOSE_PAREN, "expected %<)%>");
       else
 	{
-	  /* If there was no open parenthesis, we are recovering from
-	     an error, and we are trying to figure out what mistake
-	     the user has made.  */
 
-	  /* If there is an immediate closing parenthesis, the user
-	     probably forgot the opening one (ie, they typed "@catch
-	     NSException *e)".  Parse the closing parenthesis and keep
-	     going.  */
 	  if (c_parser_next_token_is (parser, CPP_CLOSE_PAREN))
 	    c_parser_consume_token (parser);
 	  
-	  /* If these is no immediate closing parenthesis, the user
-	     probably doesn't know that parenthesis are required at
-	     all (ie, they typed "@catch NSException *e").  So, just
-	     forget about the closing parenthesis and keep going.  */
+
 	}
       objc_begin_catch_clause (parameter_declaration);
       if (c_parser_require (parser, CPP_OPEN_BRACE, "expected %<{%>"))
@@ -9609,11 +8444,7 @@ c_parser_objc_try_catch_finally_statement (c_parser *parser)
   objc_finish_try_stmt ();
 }
 
-/* Parse an objc-synchronized-statement.
 
-   objc-synchronized-statement:
-     @synchronized ( expression ) compound-statement
-*/
 
 static void
 c_parser_objc_synchronized_statement (c_parser *parser)
@@ -9638,20 +8469,7 @@ c_parser_objc_synchronized_statement (c_parser *parser)
   objc_build_synchronized (loc, expr, stmt);
 }
 
-/* Parse an objc-selector; return NULL_TREE without an error if the
-   next token is not an objc-selector.
 
-   objc-selector:
-     identifier
-     one of
-       enum struct union if else while do for switch case default
-       break continue return goto asm sizeof typeof __alignof
-       unsigned long const short volatile signed restrict _Complex
-       in out inout bycopy byref oneway int char float double void _Bool
-       _Atomic
-
-   ??? Why this selection of keywords but not, for example, storage
-   class specifiers?  */
 
 static tree
 c_parser_objc_selector (c_parser *parser)
@@ -9720,20 +8538,7 @@ c_parser_objc_selector (c_parser *parser)
     }
 }
 
-/* Parse an objc-selector-arg.
 
-   objc-selector-arg:
-     objc-selector
-     objc-keywordname-list
-
-   objc-keywordname-list:
-     objc-keywordname
-     objc-keywordname-list objc-keywordname
-
-   objc-keywordname:
-     objc-selector :
-     :
-*/
 
 static tree
 c_parser_objc_selector_arg (c_parser *parser)
@@ -9754,13 +8559,6 @@ c_parser_objc_selector_arg (c_parser *parser)
   return list;
 }
 
-/* Parse an objc-receiver.
-
-   objc-receiver:
-     expression
-     class-name
-     type-name
-*/
 
 static tree
 c_parser_objc_receiver (c_parser *parser)
@@ -9780,20 +8578,7 @@ c_parser_objc_receiver (c_parser *parser)
   return c_fully_fold (ce.value, false, NULL);
 }
 
-/* Parse objc-message-args.
 
-   objc-message-args:
-     objc-selector
-     objc-keywordarg-list
-
-   objc-keywordarg-list:
-     objc-keywordarg
-     objc-keywordarg-list objc-keywordarg
-
-   objc-keywordarg:
-     objc-selector : objc-keywordexpr
-     : objc-keywordexpr
-*/
 
 static tree
 c_parser_objc_message_args (c_parser *parser)
@@ -9816,11 +8601,6 @@ c_parser_objc_message_args (c_parser *parser)
   return list;
 }
 
-/* Parse an objc-keywordexpr.
-
-   objc-keywordexpr:
-     nonempty-expr-list
-*/
 
 static tree
 c_parser_objc_keywordexpr (c_parser *parser)
@@ -9860,47 +8640,11 @@ c_parser_objc_diagnose_bad_element_prefix (c_parser *parser,
   return false;
 }
 
-/* Parse an Objective-C @property declaration.  The syntax is:
 
-   objc-property-declaration:
-     '@property' objc-property-attributes[opt] struct-declaration ;
-
-   objc-property-attributes:
-    '(' objc-property-attribute-list ')'
-
-   objc-property-attribute-list:
-     objc-property-attribute
-     objc-property-attribute-list, objc-property-attribute
-
-   objc-property-attribute
-     'getter' = identifier
-     'setter' = identifier
-     'readonly'
-     'readwrite'
-     'assign'
-     'retain'
-     'copy'
-     'nonatomic'
-
-  For example:
-    @property NSString *name;
-    @property (readonly) id object;
-    @property (retain, nonatomic, getter=getTheName) id name;
-    @property int a, b, c;
-
-  PS: This function is identical to cp_parser_objc_at_propery_declaration
-  for C++.  Keep them in sync.  */
 static void
 c_parser_objc_at_property_declaration (c_parser *parser)
 {
-  /* The following variables hold the attributes of the properties as
-     parsed.  They are 'false' or 'NULL_TREE' if the attribute was not
-     seen.  When we see an attribute, we set them to 'true' (if they
-     are boolean properties) or to the identifier (if they have an
-     argument, ie, for getter and setter).  Note that here we only
-     parse the list of attributes, check the syntax and accumulate the
-     attributes that we find.  objc_add_property_declaration() will
-     then process the information.  */
+
   bool property_assign = false;
   bool property_copy = false;
   tree property_getter_ident = NULL_TREE;
@@ -9910,9 +8654,7 @@ c_parser_objc_at_property_declaration (c_parser *parser)
   bool property_retain = false;
   tree property_setter_ident = NULL_TREE;
 
-  /* 'properties' is the list of properties that we read.  Usually a
-     single one, but maybe more (eg, in "@property int a, b, c;" there
-     are three).  */
+
   tree properties;
   location_t loc;
 
@@ -10046,26 +8788,7 @@ c_parser_objc_at_property_declaration (c_parser *parser)
   parser->error = false;
 }
 
-/* Parse an Objective-C @synthesize declaration.  The syntax is:
 
-   objc-synthesize-declaration:
-     @synthesize objc-synthesize-identifier-list ;
-
-   objc-synthesize-identifier-list:
-     objc-synthesize-identifier
-     objc-synthesize-identifier-list, objc-synthesize-identifier
-
-   objc-synthesize-identifier
-     identifier
-     identifier = identifier
-
-  For example:
-    @synthesize MyProperty;
-    @synthesize OneProperty, AnotherProperty=MyIvar, YetAnotherProperty;
-
-  PS: This function is identical to cp_parser_objc_at_synthesize_declaration
-  for C++.  Keep them in sync.
-*/
 static void
 c_parser_objc_at_synthesize_declaration (c_parser *parser)
 {
@@ -10082,10 +8805,7 @@ c_parser_objc_at_synthesize_declaration (c_parser *parser)
 	{
 	  c_parser_error (parser, "expected identifier");
 	  c_parser_skip_until_found (parser, CPP_SEMICOLON, NULL);
-	  /* Once we find the semicolon, we can resume normal parsing.
-	     We have to reset parser->error manually because
-	     c_parser_skip_until_found() won't reset it for us if the
-	     next token is precisely a semicolon.  */
+
 	  parser->error = false;
 	  return;
 	}
@@ -10116,18 +8836,7 @@ c_parser_objc_at_synthesize_declaration (c_parser *parser)
   objc_add_synthesize_declaration (loc, list);
 }
 
-/* Parse an Objective-C @dynamic declaration.  The syntax is:
 
-   objc-dynamic-declaration:
-     @dynamic identifier-list ;
-
-   For example:
-     @dynamic MyProperty;
-     @dynamic MyProperty, AnotherProperty;
-
-  PS: This function is identical to cp_parser_objc_at_dynamic_declaration
-  for C++.  Keep them in sync.
-*/
 static void
 c_parser_objc_at_dynamic_declaration (c_parser *parser)
 {
@@ -10160,10 +8869,7 @@ c_parser_objc_at_dynamic_declaration (c_parser *parser)
 }
 
 
-/* Handle pragmas.  Some OpenMP pragmas are associated with, and therefore
-   should be considered, statements.  ALLOW_STMT is true if we're within
-   the context of a function and such pragmas are to be allowed.  Returns
-   true if we actually parsed such a pragma.  */
+
 
 static bool
 c_parser_pragma (c_parser *parser, enum pragma_context context, bool *if_p)
@@ -10427,12 +9133,7 @@ c_parser_pragma_pch_preprocess (c_parser *parser)
     c_common_pch_pragma (parse_in, TREE_STRING_POINTER (name));
 }
 
-/* OpenACC and OpenMP parsing routines.  */
 
-/* Returns name of the next clause.
-   If the clause is not recognized PRAGMA_OMP_CLAUSE_NONE is returned and
-   the token is not consumed.  Otherwise appropriate pragma_omp_clause is
-   returned and the token is consumed.  */
 
 static pragma_omp_clause
 c_parser_omp_clause_name (c_parser *parser)
@@ -10665,8 +9366,7 @@ check_no_duplicate_clause (tree clauses, enum omp_clause_code code,
       }
 }
 
-/* OpenACC 2.0
-   Parse wait clause or wait directive parameters.  */
+
 
 static tree
 c_parser_oacc_wait_list (c_parser *parser, location_t clause_loc, tree list)
@@ -10715,17 +9415,7 @@ c_parser_oacc_wait_list (c_parser *parser, location_t clause_loc, tree list)
   return list;
 }
 
-/* OpenACC 2.0, OpenMP 2.5:
-   variable-list:
-     identifier
-     variable-list , identifier
 
-   If KIND is nonzero, create the appropriate node and install the
-   decl in OMP_CLAUSE_DECL and add the node to the head of the list.
-   If KIND is nonzero, CLAUSE_LOC is the location of the clause.
-
-   If KIND is zero, create a TREE_LIST with the decl in TREE_PURPOSE;
-   return the list created.  */
 
 static tree
 c_parser_omp_variable_list (c_parser *parser,
@@ -10877,21 +9567,6 @@ c_parser_omp_var_list_parens (c_parser *parser, enum omp_clause_code kind,
   return list;
 }
 
-/* OpenACC 2.0:
-   copy ( variable-list )
-   copyin ( variable-list )
-   copyout ( variable-list )
-   create ( variable-list )
-   delete ( variable-list )
-   present ( variable-list )
-   present_or_copy ( variable-list )
-     pcopy ( variable-list )
-   present_or_copyin ( variable-list )
-     pcopyin ( variable-list )
-   present_or_copyout ( variable-list )
-     pcopyout ( variable-list )
-   present_or_create ( variable-list )
-     pcreate ( variable-list ) */
 
 static tree
 c_parser_oacc_data_clause (c_parser *parser, pragma_omp_clause c_kind,
@@ -11145,15 +9820,7 @@ c_parser_omp_clause_final (c_parser *parser, tree list)
   return list;
 }
 
-/* OpenACC, OpenMP 2.5:
-   if ( expression )
 
-   OpenMP 4.5:
-   if ( directive-name-modifier : expression )
-
-   directive-name-modifier:
-     parallel | task | taskloop | target data | target | target update
-     | target enter data | target exit data  */
 
 static tree
 c_parser_omp_clause_if (c_parser *parser, tree list, bool is_omp)
@@ -11379,8 +10046,7 @@ c_parser_omp_clause_num_gangs (c_parser *parser, tree list)
   return list;
 }
 
-/* OpenMP 2.5:
-   num_threads ( expression ) */
+
 
 static tree
 c_parser_omp_clause_num_threads (c_parser *parser, tree list)
@@ -11424,8 +10090,7 @@ c_parser_omp_clause_num_threads (c_parser *parser, tree list)
   return list;
 }
 
-/* OpenMP 4.5:
-   num_tasks ( expression ) */
+
 
 static tree
 c_parser_omp_clause_num_tasks (c_parser *parser, tree list)
@@ -11469,8 +10134,6 @@ c_parser_omp_clause_num_tasks (c_parser *parser, tree list)
   return list;
 }
 
-/* OpenMP 4.5:
-   grainsize ( expression ) */
 
 static tree
 c_parser_omp_clause_grainsize (c_parser *parser, tree list)
@@ -11514,8 +10177,6 @@ c_parser_omp_clause_grainsize (c_parser *parser, tree list)
   return list;
 }
 
-/* OpenMP 4.5:
-   priority ( expression ) */
 
 static tree
 c_parser_omp_clause_priority (c_parser *parser, tree list)
@@ -11560,8 +10221,7 @@ c_parser_omp_clause_priority (c_parser *parser, tree list)
   return list;
 }
 
-/* OpenMP 4.5:
-   hint ( expression ) */
+
 
 static tree
 c_parser_omp_clause_hint (c_parser *parser, tree list)
