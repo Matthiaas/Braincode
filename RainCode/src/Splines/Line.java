@@ -11,7 +11,6 @@ public class Line {
 
     private List<Point> points;
 
-
     private double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE, maxX = 0, maxY = 0;
 
     public Line() {
@@ -54,8 +53,8 @@ public class Line {
         return r;
     }
 
-    public void add(double x, double y, double z) {
-        points.add(new Point(x, y, z));
+    public void add(double x, double y, double z, String methodName) {
+        points.add(new Point(x, y, z, methodName));
     }
 
     public int length() {
@@ -83,7 +82,7 @@ public class Line {
 
         List<Point> randomPoints = new ArrayList<>(numPoints);
         for (int i = 0; i < numPoints; i++) {
-            randomPoints.add(new Point(Math.random() * width, Math.random() * height, Math.random() * height));
+            randomPoints.add(new Point(Math.random() * width, Math.random() * height, Math.random() * height, ""));
         }
 
         int randomIndex = 0;
