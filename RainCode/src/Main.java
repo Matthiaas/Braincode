@@ -130,7 +130,7 @@ public class Main extends JPanel {
             double heightFaktor = height / html_height;
 
             String html = "" +
-                    "<img src=\"" + args[2] + "\" width=\"" + html_width + "\" height=\"" + html_height + "\" alt=\"Karte\" usemap=\"#Landkarte\"> "
+                    "<img src=\"" + args[1] + "\" width=\"" + html_width + "\" height=\"" + html_height + "\" alt=\"Karte\" usemap=\"#Landkarte\"> "
                     + "<map name=\"Methods\">";
 
 
