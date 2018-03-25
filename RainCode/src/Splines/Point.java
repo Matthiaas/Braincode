@@ -5,7 +5,6 @@ import cparse.GaussDistr;
 public class Point {
 
     double x, y, z;
-    String methodName;
 
     public Point(double x, double y, double z) {
         this.x = x;

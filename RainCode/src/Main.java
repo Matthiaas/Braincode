@@ -17,8 +17,8 @@ public class Main extends JPanel {
 
     private BufferedImage bufferedImage;
     private static final Color[] colors = new Color[]{new Color(250, 15, 12), new Color(111, 187, 37),
-            new Color(253, 95, 0), new Color(31, 66, 151), new Color(230, 35, 137),
-            new Color(46, 172, 192), new Color(250, 245, 35), new Color(234, 232, 43), new Color(237, 36, 141)};
+            new Color(253, 95, 0), new Color(31, 66, 151),
+            new Color(46, 172, 192), new Color(250, 245, 35), new Color(237, 36, 141)};
 
 
     public Main(BufferedImage bufferedImage) {
@@ -29,11 +29,11 @@ public class Main extends JPanel {
         boolean server = args.length == 2;
 
 
-        int width = 3840;
-        int height = 2160;
+        int width = 3840*2;
+        int height = 2160*2;
 
 
-        Parser parser = new FunParser();
+        Parser parser = new FunParser(width, height);
 
         List<Line> lines;
         if (server) {
@@ -51,6 +51,11 @@ public class Main extends JPanel {
         g.setColor(new Color(26, 25, 25));
         g.clearRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
 
+        for (int i = 0; i < colors.length; i++) {
+            g.setColor(colors[i]);
+            g.fillRect(i*100,0,100,100);
+        }
+
         System.out.println(lines.size() + " lines");
 
         GaussDistr gauss = new GaussDistr(42);
@@ -65,7 +70,7 @@ public class Main extends JPanel {
         */
 
 
-        int color = 0;
+        int color = (int)(Math.random()*7);
         for (int i = 0; i < lines.size(); i++) {
             Line longLine = lines.get(i);
            // if(Math.random() > 1.0/2) continue;;
@@ -102,6 +107,24 @@ public class Main extends JPanel {
 
         panel.repaint();
         */
+
+        int html_width = 690;
+        int html_hight = 538;
+        String html = "" +
+                "<img src=\"" + args[2] + "\" width=\"" + html_width + "\" height=\"" + html_hight + "\" alt=\"Karte\" usemap=\"#Landkarte\"> "
+                + "<map name=\"Methods\">";
+
+        List included
+        for (Line l : lines) {
+
+    <area shape =\"rect\" coords=\"11,10,80,46\"
+            href =\"http://www.koblenz.de/\" alt=\"Koblenz\" title=\"Koblenz\">
+        }
+
+               html = html + "</map>";
+
+
+
 
     }
 

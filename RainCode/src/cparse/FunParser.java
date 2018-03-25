@@ -3,11 +3,13 @@ package cparse;
 import Splines.Line;
 import Splines.Point;
 
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.*;
 import java.util.*;
+
 
 /**
  * WARNING!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -24,6 +26,7 @@ import java.util.*;
 
 public class FunParser implements Parser {
 
+
     public static final int PRIMEX = 3840, PRIMEY = 2160, PRIMEZ = 43037;
 
 
@@ -32,6 +35,12 @@ public class FunParser implements Parser {
 
     private Map<String , Point> methodeNameToPoint = new HashMap<>();
 
+
+
+
+    public FunParser(int width, int height) {
+
+    }
 
     /**
      *
@@ -104,7 +113,7 @@ public class FunParser implements Parser {
         System.out.println("------------------------------------------------------");
         functions.stream().forEach(e -> System.out.println(e));
         System.out.println("------------------------------------------------------");
-        return mapNamesToPoints(functions, PRIMEX,PRIMEY,PRIMEZ);
+        return mapNamesToPoints(functions, PRIMEX, PRIMEY, PRIMEZ);
 
     }
 
@@ -146,7 +155,7 @@ public class FunParser implements Parser {
 
             //System.out.println(n + "\t\t\tx: " + xyz[0] + "\ty: " + xyz[1] + "\tz: " + xyz[2]);
 
-           line.add(xyz[0] ,xyz[1], xyz[2], str);
+           line.add(xyz[0] ,xyz[1], xyz[2]);
        }
        return line;
     }

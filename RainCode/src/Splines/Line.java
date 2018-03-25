@@ -53,7 +53,7 @@ public class Line {
         return r;
     }
 
-    public void add(double x, double y, double z, String methodName) {
+    public void add(double x, double y, double z) {
         points.add(new Point(x, y, z));
     }
 
