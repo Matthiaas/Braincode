@@ -74,7 +74,9 @@ public class FunParser implements Parser {
                 }
             }
             else if(c == '{'){
+                index++;
                 Line line = findCalls(code);
+                System.out.println("_----------------------------------------------");
                 if (line.length()>=4)
                     ret.add(line);
             }
@@ -86,17 +88,16 @@ public class FunParser implements Parser {
 
     private String prePro(String code){
         int in = 0;
-        //System.out.println(code);
         HashMap<String, Integer>  funcs = new HashMap<>();
         int methodGlobalCount = 0;
         String nameBuffer = "";
+        code = code.replaceAll("/\\*(.|[\\r\\n])*?\\*/", " ");
+        code = code.replaceAll("//.*(?=\\n)" ," ");
+
         while(in < code.length()-1) {
 
             char c;
-
-
-
-            c = code.charAt(++in);
+           c = code.charAt(++in);
             if (c == ' ') {
                 while (c == ' ') c = code.charAt(in++);
                 if (c == '(') {
@@ -129,8 +130,6 @@ public class FunParser implements Parser {
             if(entr.getValue() < methodGlobalCount * DROPOUT){
                 code = code.replaceAll(entr.getKey() + " *\\(.*" , " ");
             }
-            //else
-               // System.out.println(entr.getValue() + ",    " + (methodGlobalCount * DROPOUT) + "  "+ entr.getKey());
         }
         return code;
     }
@@ -142,26 +141,34 @@ public class FunParser implements Parser {
 
         List<String> functions = new LinkedList<String>();
 
-        while(brackets > 0 & index<code.length()-1){
-            c = code.charAt(++index);
-            if(c == ' '){
-                while (c == ' ') c = code.charAt(index++);
-                if(c == '('){
-                    if(isFunction(nameBuffer)) functions.add(nameBuffer);
-                }
-                nameBuffer = "";
+        boolean mayReset = false;
+        while(brackets > 0 && index<code.length()){
+            c = code.charAt(index);
+            while (c == ' ') {
+                index++;
+                c = code.charAt(index);
+                mayReset = true;
             }
-            else if(goodChar(c)){
-                nameBuffer += c +"";
+
+            if(goodChar(c)){
+                if(mayReset){
+                    nameBuffer = "";
+                    mayReset = false;
+                }
+                nameBuffer += c ;
             }
             else if(c == '('){
-                if(isFunction(nameBuffer)) functions.add(nameBuffer);
+                if(isFunction(nameBuffer)){
+                    functions.add(nameBuffer);
+                    System.out.println(nameBuffer);
+                }
             }
             else{
                 if(c == '{') brackets++;
                 if(c == '}') brackets--;
                 nameBuffer = "";
             }
+            index++;
         }
 
         return mapNamesToPoints(functions, PRIMEX, PRIMEY, PRIMEZ);
@@ -170,7 +177,7 @@ public class FunParser implements Parser {
 
 
     private boolean goodChar(char c){
-        return (c >= 'a') && (c <= 'z') || (c >= 'A') && (c <= 'Z') || (c == '_');
+        return ((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')) || (c == '_');
     }
 
     private boolean isFunction(String name){
@@ -199,7 +206,7 @@ public class FunParser implements Parser {
 
     private Line mapNamesToPoints(List<String> names, int primex, int primey, int primez){
         Line line = new Line();
-        
+
         for (String str : names) {
            int hash = Math.abs(str.hashCode());
 
@@ -208,8 +215,6 @@ public class FunParser implements Parser {
            long x = (hash*235723l)%primex, y = (hash*238477l)%primey, z =(hash*424234l)%primez;
            methodeNameToPoint.put(str , new Point(x,y,z));
            double[] xyz = gaussDistr.distribute(x,y,z,count);
-
-            //System.out.println(n + "\t\t\tx: " + xyz[0] + "\ty: " + xyz[1] + "\tz: " + xyz[2]);
 
            line.add(xyz[0] ,xyz[1], xyz[2]);
        }
