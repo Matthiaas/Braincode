@@ -65,16 +65,14 @@ public class Line {
         return "Line: \n" + points.stream().map(p -> "(" + p.x + "," + p.y + "," + p.z + ")").collect(Collectors.joining(","));
     }
 
-    public static void hack(List<Line> lines) {
-        for (int i = 0; i < lines.size(); i++) {
-            Line l = lines.get(i);
-            if (l.length() >= 8) {
-                List<Point> points = l.points;
-                lines.remove(i);
-                lines.add(new Line(l.points.subList(0, 4)));
-                lines.add(new Line(l.points.subList(4, l.points.size())));
-            }
+    public static List<Line> hack(Line l) {
+        List<Line> r = new ArrayList<>();
+        if (l.length() >= 8) {
+            List<Point> points = l.points;
+            r.add(new Line(l.points.subList(0, 4)));
+            r.add(new Line(l.points.subList(4, l.points.size())));
         }
+        return r;
     }
 
     public static List<Line> betterHack(Line line, int width, int height, int numPoints, int numConnections, int count, GaussDistr g) {

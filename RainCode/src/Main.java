@@ -42,7 +42,7 @@ public class Main extends JPanel {
             String[] files = {args[0]};
             lines = parser.parseFiles(files);
         } else {
-            String[] files = {"res/test.c"};
+            String[] files = {"res/test3.c"};
             lines = parser.parseFiles(files);
         }
 
@@ -87,6 +87,7 @@ public class Main extends JPanel {
 
             List<Line> splitLines = Line.betterHack(longLine, width, height, 2, 4, lines.size(), gauss);
             //List<Line> splitLines = Line.evenBetterHack(longLine, constructs, 5, gauss, longLine.length(), i);
+            //List<Line> splitLines = Line.hack(lines.get(i));
 
             for (int j = 0; j < splitLines.size(); j++) {
                 Interpolator interpolator = new Casteljau(splitLines.get(j));

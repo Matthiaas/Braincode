@@ -89,3 +89,6 @@ freeline_project_description.json
 *.exe
 *.out
 *.app
+
+RainCode/src/META-INF/
+*.png
