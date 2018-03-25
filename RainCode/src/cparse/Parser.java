@@ -35,13 +35,5 @@ public interface Parser {
         return lines;
     }
 
-
-    public int getMaxX();
-
-    public int getMaxY();
-
-    public int getMinX();
-
-    public int getMinY();
 }
 

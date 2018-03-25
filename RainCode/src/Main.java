@@ -1,8 +1,6 @@
 import Splines.Casteljau;
 import Splines.Interpolator;
 import Splines.Line;
-import Splines.Regression;
-import cparse.CharParser;
 import cparse.FunParser;
 import cparse.GaussDistr;
 import cparse.Parser;
@@ -42,11 +40,11 @@ public class Main extends JPanel {
             String[] files = {args[0]};
             lines = parser.parseFiles(files);
         } else {
-            String[] files = {"res/test3.c"};
+            String[] files = {"res/test.c"};
             lines = parser.parseFiles(files);
         }
 
-        Line.scale(lines, parser.getMinX(), parser.getMinY(), parser.getMaxX(), parser.getMaxY(), width, height);
+        Line.scale(lines, width, height);
 
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics g = bufferedImage.getGraphics();
@@ -54,14 +52,28 @@ public class Main extends JPanel {
         g.clearRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
 
         System.out.println(lines.size() + " lines");
+
         GaussDistr gauss = new GaussDistr(42);
+
+        /*
+        g.setColor(Color.red);
+        for(Line l: lines) {
+            for (int i = 0; i < l.length(); i++) {
+                g.fillRect((int) l.getX()[i], (int) l.getY()[i], 5, 5);
+            }
+        }
+        */
+
+
+        int color = 0;
         for (int i = 0; i < lines.size(); i++) {
             Line longLine = lines.get(i);
             List<Line> splitLines = Line.betterHack(longLine, width, height, 2, 4, lines.size(), gauss);
-            for (int j = 0; j < splitLines.size(); j = j + 60) {
+            for (int j = 0; j < splitLines.size(); j++) {
                 Interpolator interpolator = new Casteljau(splitLines.get(j));
-                interpolator.paint(bufferedImage, 0.01, colors[(i * 35 % 17) % colors.length]);
+                interpolator.paint(bufferedImage, 0.01, colors[color % colors.length]);
             }
+            color++;
         }
 
         String fileName = server ? "out/" + args[1] : "res/pics/" + System.currentTimeMillis() + ".png";

@@ -102,12 +102,12 @@ public class Line {
     }
 
 
-    public static void scale(List<Line> lines, int minX, int minY, int maxX, int maxY, int width, int height) {
+    public static void scale(List<Line> lines, int width, int height) {
 
         for (Line l : lines) {
             for (Point p : l.points) {
-                p.x = 0.05 * width + ((p.x - minX) / (maxX - minX)) * 0.85 * width;
-                p.y = 0.05 * height + ((p.y - minY) / (maxY - minY)) * 0.85 * height;
+                p.x = 0.05 * width + p.x * 0.90;
+                p.y = 0.05 * height + p.y * 0.90;
             }
         }
     }
