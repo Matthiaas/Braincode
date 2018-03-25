@@ -5,12 +5,14 @@ import cparse.GaussDistr;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class Line {
 
     private List<Point> points;
 
+    private static Random rand = new Random(24);
     private double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE, maxX = 0, maxY = 0;
 
     public Line() {
@@ -80,7 +82,7 @@ public class Line {
 
         List<Point> randomPoints = new ArrayList<>(numPoints);
         for (int i = 0; i < numPoints; i++) {
-            randomPoints.add(new Point(Math.random() * width, Math.random() * height, Math.random() * height));
+            randomPoints.add(new Point(rand.nextDouble()* width, rand.nextDouble() * height, rand.nextDouble() * height));
         }
 
         int randomIndex = 0;

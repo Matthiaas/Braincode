@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Main extends JPanel {
 
@@ -31,8 +32,8 @@ public class Main extends JPanel {
         boolean server = args.length == 2;
 
 
-        int width = 3840 ;
-        int height = 2160  ;
+        int width = 3840 *2;
+        int height = 2160  *2;
 
 
         Parser parser = new FunParser(width, height);
@@ -42,7 +43,7 @@ public class Main extends JPanel {
             String[] files = {args[0]};
             lines = parser.parseFiles(files);
         } else {
-            String[] files = {"res/test.c"};
+            String[] files = {"res/coreutils/head.c","res/coreutils/tail.c"};
             lines = parser.parseFiles(files);
         }
 
@@ -61,18 +62,8 @@ public class Main extends JPanel {
         //System.out.println(lines.size() + " lines");
 
         GaussDistr gauss = new GaussDistr(42);
-
-        /*
-        g.setColor(Color.red);
-        for(Line l: lines) {
-            for (int i = 0; i < l.length(); i++) {
-                g.fillRect((int) l.getX()[i], (int) l.getY()[i], 5, 5);
-            }
-        }
-        */
-
-
-        int color = (int) (Math.random() * 7);
+        Random r  = new Random(1);
+        int color = (int) (r.nextInt(7));
         /*
         List<Point> constructs = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
@@ -82,17 +73,19 @@ public class Main extends JPanel {
 
         for (int i = 0; i < lines.size(); i++) {
             Line longLine = lines.get(i);
-            if(longLine.length() > 100) continue;
-           // if(Math.random() > 1.0/2) continue;;
+
+            System.out.println(longLine.length());
+
 
             List<Line> splitLines = Line.betterHack(longLine, width, height, 3, 4, lines.size(), gauss);
             //List<Line> splitLines = Line.evenBetterHack(longLine, constructs, 5, gauss, longLine.length(), i);
             //List<Line> splitLines = Line.hack(lines.get(i));
 
             for (int j = 0; j < splitLines.size(); j+= 1) {
+
                 Interpolator interpolator = new Casteljau(splitLines.get(j));
                 interpolator.paint(bufferedImage, 0.01, colors[color % colors.length]);
-
+                if(longLine.length() > 20) j++;
             }
 
             color++;

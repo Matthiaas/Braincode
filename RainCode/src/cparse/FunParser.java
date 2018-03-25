@@ -28,7 +28,7 @@ public class FunParser implements Parser {
 
 
     public static int PRIMEX = 3840, PRIMEY = 2160, PRIMEZ = 1;
-    public final static double DROPOUT  = .004;
+    public final static double DROPOUT  = .009;
 
     private int index = 0;
     private GaussDistr gaussDistr = new GaussDistr(1337);
