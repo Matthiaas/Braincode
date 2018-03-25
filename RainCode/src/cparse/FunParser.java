@@ -133,11 +133,11 @@ public class FunParser implements Parser {
         }
     }
 
-    public Point getCentreofMethode(String name){
+    public Point getCentreOfMethod(String name){
         return methodeNameToPoint.get(name);
     }
 
-    public Set<String> getMetohdes(){
+    public Set<String> getMethods(){
         return methodeNameToPoint.keySet();
     }
 

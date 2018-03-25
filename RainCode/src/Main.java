@@ -1,6 +1,7 @@
 import Splines.Casteljau;
 import Splines.Interpolator;
 import Splines.Line;
+import Splines.Point;
 import cparse.FunParser;
 import cparse.GaussDistr;
 import cparse.Parser;
@@ -109,22 +110,28 @@ public class Main extends JPanel {
         */
 
         int html_width = 690;
-        int html_hight = 538;
+        int html_height = 538;
+
+        double widthFaktor = width/html_width;
+        double heightFaktor = height/html_height;
+
         String html = "" +
-                "<img src=\"" + args[2] + "\" width=\"" + html_width + "\" height=\"" + html_hight + "\" alt=\"Karte\" usemap=\"#Landkarte\"> "
+                "<img src=\"" + args[2] + "\" width=\"" + html_width + "\" height=\"" + html_height + "\" alt=\"Karte\" usemap=\"#Landkarte\"> "
                 + "<map name=\"Methods\">";
 
-        List included
-        for (Line l : lines) {
+        for (String method : ((FunParser) parser).getMethods()) {
+            Point location = ((FunParser) parser).getCentreOfMethod(method);
+            double xScaled = location.getX()/widthFaktor;
+            double yScaled = location.getY()/widthFaktor;
 
-    <area shape =\"rect\" coords=\"11,10,80,46\"
-            href =\"http://www.koblenz.de/\" alt=\"Koblenz\" title=\"Koblenz\">
+            html = html +
+                    "<area shape =\"rect\" coords=\""+ (xScaled-5) + "," + (yScaled-5) + "," + (xScaled+5) + "," + (yScaled+5) + "\"" +
+                    "alt=\"" + method +"\" title=\"" + method + "\">";
         }
 
-               html = html + "</map>";
+        html = html + "</map>";
 
-
-
+        System.out.println(html);
 
     }
 
