@@ -28,7 +28,7 @@ public class FunParser {
 
 
     public static int PRIMEX = 3840, PRIMEY = 2160, PRIMEZ = 1;
-    public final static double DROPOUT  = .009;
+    public final static double DROPOUT  = .005;
 
     private int index = 0;
     private GaussDistr gaussDistr = new GaussDistr(1337);
@@ -75,7 +75,6 @@ public class FunParser {
             else if(c == '{'){
                 index++;
                 Line line = findCalls(code);
-                System.out.println("_----------------------------------------------");
                 if (line.length()>=4)
                     ret.add(line);
             }
@@ -90,8 +89,8 @@ public class FunParser {
         HashMap<String, Integer>  funcs = new HashMap<>();
         int methodGlobalCount = 0;
         String nameBuffer = "";
-        code = code.replaceAll("/\\*(.|[\\r\\n])*?\\*/", " ");
-        code = code.replaceAll("//.*(?=\\n)" ," ");
+       // code = code.replaceAll("/\\*(.|[\\r\\n])*?\\*/", " ");
+      //  code = code.replaceAll("//.*(?=\\n)" ," ");
 
         while(in < code.length()-1) {
 
@@ -159,7 +158,6 @@ public class FunParser {
             else if(c == '('){
                 if(isFunction(nameBuffer)){
                     functions.add(nameBuffer);
-                    System.out.println(nameBuffer);
                 }
             }
             else{

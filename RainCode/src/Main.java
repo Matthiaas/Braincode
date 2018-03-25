@@ -18,7 +18,7 @@ public class Main {
 
     private static final int WIDTH = 3840 * 2;
     private static final int HEIGHT = 2160 * 2;
-    private static final String[] LOCAL_FILES = new String[]{"res/coreutils/head.c", "res/coreutils/tail.c"};
+    private static final String[] LOCAL_FILES = new String[]{"res/test4.c"};
     private static final GaussDistr GAUSS = new GaussDistr(42);
     private static final Random RANDOM = new Random(1);
 
