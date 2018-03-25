@@ -162,9 +162,7 @@ public class FunParser implements Parser {
                 nameBuffer = "";
             }
         }
-       // System.out.println("------------------------------------------------------");
-       // functions.stream().forEach(e -> System.out.println(e));
-      //  System.out.println("------------------------------------------------------");
+
         return mapNamesToPoints(functions, PRIMEX, PRIMEY, PRIMEZ);
 
     }
@@ -196,7 +194,7 @@ public class FunParser implements Parser {
 
     private Line mapNamesToPoints(List<String> names, int primex, int primey, int primez){
         Line line = new Line();
-        System.out.println("--------------------------------------------");
+        
         for (String str : names) {
            int hash = Math.abs(str.hashCode());
 
