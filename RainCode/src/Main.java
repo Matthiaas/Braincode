@@ -40,7 +40,7 @@ public class Main extends JPanel {
             String[] files = {args[0]};
             lines = parser.parseFiles(files);
         } else {
-            String[] files = {"res/test2.c"};
+            String[] files = {"res/test.c"};
             lines = parser.parseFiles(files);
         }
 
@@ -68,7 +68,7 @@ public class Main extends JPanel {
         int color = 0;
         for (int i = 0; i < lines.size(); i++) {
             Line longLine = lines.get(i);
-            if(Math.random() > 1.0/2) continue;;
+           // if(Math.random() > 1.0/2) continue;;
 
 
             List<Line> splitLines = Line.betterHack(longLine, width, height, 2, 4, lines.size(), gauss);
