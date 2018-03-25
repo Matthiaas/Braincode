@@ -118,7 +118,7 @@ public class Main extends JPanel {
                 int yScaled = (int) (location.getY() / heightFaktor);
 
                 html = html +
-                        "<area shape =\"rect\" coords=\"" + (xScaled - 10) + "," + (yScaled - 10) + "," + (xScaled + 10) + "," + (yScaled + 10) + "\"" +
+                        "<area shape =\"rect\" coords=\"" + (xScaled - 30) + "," + (yScaled - 30) + "," + (xScaled + 30) + "," + (yScaled + 30) + "\"" +
                         "alt=\"" + method + "\" title=\"" + method + "\">";
 
             }
