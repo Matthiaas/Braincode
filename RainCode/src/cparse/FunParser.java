@@ -57,28 +57,26 @@ public class FunParser implements Parser {
         code += "\n";
         int length = code.length();
 
-        for (index = 0; index < length-1;index ++) {
+        for (index = 0; index < length; index++) {
             char c = code.charAt(index);
 
-
-            if(c == '{'){
+            if (c == '/') {
+                c = code.charAt(++index);
+                if (c == '/') {
+                   do{
+                       c = code.charAt(++index);
+                   }while (c != '\n');
+                } else if (c == '*') {
+                    do{
+                        c = code.charAt(++index);
+                    }while (c != '*' && code.charAt(index+1) != '/');
+                    index++;
+                }
+            }
+            else if(c == '{'){
                 Line line = findCalls(code);
                 if (line.length()>=4)
                     ret.add(line);
-            }
-
-            if (c == '/') {
-                char c2 = code.charAt(index+1);
-                if(c2 == '/'){
-                    while(index < length && c != '\n'){
-                        c = code.charAt(++index);
-                    }
-                }
-                if(c2 == '*'){
-                    while(index < length-1 && c != '*' && code.charAt(index+1) != '/'){
-                        c = code.charAt(++index);
-                    }
-                }
             }
         }
 
@@ -92,8 +90,12 @@ public class FunParser implements Parser {
         HashMap<String, Integer>  funcs = new HashMap<>();
         int methodGlobalCount = 0;
         String nameBuffer = "";
-        char c;
         while(in < code.length()-1) {
+
+            char c;
+
+
+
             c = code.charAt(++in);
             if (c == ' ') {
                 while (c == ' ') c = code.charAt(in++);
@@ -138,27 +140,19 @@ public class FunParser implements Parser {
         String nameBuffer = "";
         char c;
 
-        List<String> functions = new LinkedList<>();
+        List<String> functions = new LinkedList<String>();
 
-        while(brackets > 0 && index < code.length()-1){
-            c = code.charAt(index++);
-
-            if(goodChar(c)){
-                nameBuffer += c + "";
-                continue;
-            }
-            else if(c == ' '){
+        while(brackets > 0 & index<code.length()-1){
+            c = code.charAt(++index);
+            if(c == ' '){
                 while (c == ' ') c = code.charAt(index++);
                 if(c == '('){
                     if(isFunction(nameBuffer)) functions.add(nameBuffer);
-                }else if(goodChar(c)){
-                    nameBuffer += c + "";
-                    continue;
                 }
                 nameBuffer = "";
-
-
-
+            }
+            else if(goodChar(c)){
+                nameBuffer += c +"";
             }
             else if(c == '('){
                 if(isFunction(nameBuffer)) functions.add(nameBuffer);
@@ -182,6 +176,8 @@ public class FunParser implements Parser {
     private boolean isFunction(String name){
         switch (name){
             case "if":
+            case "else":
+            case "elseif":
             case "while":
             case "for":
             case "return":
