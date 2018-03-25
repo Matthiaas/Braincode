@@ -19,15 +19,9 @@ import java.util.Random;
 
 public class Main extends JPanel {
 
-    private BufferedImage bufferedImage;
     private static final Color[] colors = new Color[]{new Color(250, 15, 12), new Color(111, 187, 37),
             new Color(253, 95, 0), new Color(31, 66, 151),
             new Color(46, 172, 192), new Color(250, 245, 35), new Color(237, 36, 141)};
-
-
-    public Main(BufferedImage bufferedImage) {
-        this.bufferedImage = bufferedImage;
-    }
 
     public static void main(String[] args) {
         boolean server = args.length == 2;
@@ -69,14 +63,10 @@ public class Main extends JPanel {
         for (int i = 0; i < lines.size(); i++) {
             Line longLine = lines.get(i);
 
-            System.out.println(longLine.length());
-
-
             List<Line> splitLines = Line.betterHack(longLine, width, height, 3, 4, lines.size(), gauss);
             //List<Line> splitLines = Line.evenBetterHack(longLine, constructs, 5, gauss, longLine.length(), i);
 
             for (int j = 0; j < splitLines.size(); j+= 1) {
-
                 Interpolator interpolator = new Casteljau(splitLines.get(j));
                 interpolator.paint(bufferedImage, 0.01, colors[color % colors.length]);
                 if(longLine.length() > 20) j++;
@@ -120,11 +110,6 @@ public class Main extends JPanel {
             System.out.println(html);
         }
 
-    }
-
-    public void paint(Graphics g) {
-        g.clearRect(0, 0, this.getWidth(), this.getHeight());
-        g.drawImage(bufferedImage, 0, 0, null);
     }
 
 }
