@@ -26,12 +26,11 @@ import java.util.List;
 
 public class FunParser implements Parser {
 
-    public static final int PRIMEX = 34703, PRIMEY = 24421, PRIMEZ = 43037;
+    public static final int PRIMEX = 3840, PRIMEY = 2160, PRIMEZ = 43037;
 
 
     int index = 0;
     GaussDistr gaussDistr = new GaussDistr(1337);
-    private int maxX = 0, maxY = 0;
 
     /**
      *
@@ -72,15 +71,6 @@ public class FunParser implements Parser {
         return ret;
     }
 
-    @Override
-    public int getMaxX() {
-        return maxX;
-    }
-
-    @Override
-    public int getMaxY() {
-        return maxY;
-    }
 
     private Line findCalls(String code){
         int brackets = 1;
@@ -137,14 +127,12 @@ public class FunParser implements Parser {
         Line line = new Line();
         System.out.println("--------------------------------------------");
         for (String n : names) {
-           int sum = n.hashCode();
+           int sum = Math.abs(n.hashCode());
 
            long count = names.stream().filter(e -> e.equals(n)).count();
            sum++;
            double[] xyz = gaussDistr.distribute((sum*235723l)%primex,(sum*238477l)%primey,(sum*424234l)%primez,count);
 
-            maxX = Math.max(maxX, (int) xyz[0]);
-            maxY = Math.max(maxY, (int) xyz[1]);
             //System.out.println(n + "\t\t\tx: " + xyz[0] + "\ty: " + xyz[1] + "\tz: " + xyz[2]);
 
            line.add(xyz[0] ,xyz[1], xyz[2]);

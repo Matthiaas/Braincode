@@ -35,7 +35,7 @@ public abstract class Interpolator {
         }
 
         for (int i = 0; i < l.length(); i++) {
-           // g.fillRect((int) l.getX()[i], (int) l.getY()[i], 5, 5);
+           //g.fillRect((int) l.getX()[i], (int) l.getY()[i], 5, 5);
         }
 
         return bufferedImage;

@@ -10,8 +10,8 @@ import java.util.List;
 
 public interface Parser {
 
-    public default List<Line> parseString(String code){
-        throw  new RuntimeException("Not Implemented yet");
+    public default List<Line> parseString(String code) {
+        throw new RuntimeException("Not Implemented yet");
     }
 
     public default List<Line> parseFile(String filename) {
@@ -27,17 +27,13 @@ public interface Parser {
         List<Line> lines = new ArrayList<>();
         try {
             for (String file : filenames)
-            lines.addAll(parseString(new String(Files.readAllBytes(Paths.get(file)))));
+                lines.addAll(parseString(new String(Files.readAllBytes(Paths.get(file)))));
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
         return lines;
     }
-
-
-    public int getMaxX();
-    public int getMaxY();
 
 }
 

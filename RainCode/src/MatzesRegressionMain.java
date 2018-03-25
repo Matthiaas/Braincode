@@ -33,9 +33,7 @@ public class MatzesRegressionMain extends JPanel {
 
         Parser parser = new FunParser();
         List<Line> lines = parser.parseFile("res/test6.c");
-        Line.scale(lines, parser.getMaxX(), parser.getMaxY(), frame.getWidth(), frame.getHeight());
-
-        System.out.println("THIS:"+parser.getMaxX());
+        Line.scale(lines, frame.getWidth(), frame.getHeight());
 
         BufferedImage bufferedImage = new BufferedImage(frame.getWidth(), frame.getHeight(), BufferedImage.TYPE_INT_RGB);
         bufferedImage.getGraphics().clearRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());

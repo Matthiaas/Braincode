@@ -1,8 +1,6 @@
 import Splines.Casteljau;
 import Splines.Interpolator;
 import Splines.Line;
-import Splines.Regression;
-import cparse.CharParser;
 import cparse.FunParser;
 import cparse.GaussDistr;
 import cparse.Parser;
@@ -46,7 +44,7 @@ public class Main extends JPanel {
             lines = parser.parseFiles(files);
         }
 
-        Line.scale(lines, parser.getMaxX(), parser.getMaxY(), width, height);
+        Line.scale(lines, width, height);
 
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics g = bufferedImage.getGraphics();
@@ -54,10 +52,20 @@ public class Main extends JPanel {
         g.clearRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
 
         System.out.println(lines.size() + " lines");
+
         GaussDistr gauss = new GaussDistr(42);
 
+        /*
+        g.setColor(Color.red);
+        for(Line l: lines) {
+            for (int i = 0; i < l.length(); i++) {
+                g.fillRect((int) l.getX()[i], (int) l.getY()[i], 5, 5);
+            }
+        }
+        */
 
-        int cc = 0;
+
+        int color = 0;
         for (int i = 0; i < lines.size(); i++) {
             Line longLine = lines.get(i);
             if(Math.random() > 1.0/2) continue;;
@@ -65,43 +73,36 @@ public class Main extends JPanel {
 
             List<Line> splitLines = Line.betterHack(longLine, width, height, 2, 4, lines.size(), gauss);
             for (int j = 0; j < splitLines.size(); j++) {
-                if(Math.random() > 1.0/30) continue;;
                 Interpolator interpolator = new Casteljau(splitLines.get(j));
-                interpolator.paint(bufferedImage, 0.01, colors[cc++ % colors.length]);
+                interpolator.paint(bufferedImage, 0.01, colors[color % colors.length]);
             }
+            color++;
         }
 
-        if (server) {
-            String fileName = "out/" + args[1];
-            File f = new File(fileName);
-            try {
-                ImageIO.write(bufferedImage, "PNG", f);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            JFrame frame = new JFrame();
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setTitle("RainCode");
-            frame.setSize(1600, 800);
-            frame.setLocationRelativeTo(null);
-
-            String fileName = "res/pics/" + System.currentTimeMillis() + "";
-            File f = new File(fileName + ".png");
-            try {
-                ImageIO.write(bufferedImage, "PNG", f);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            JPanel panel = new Main(bufferedImage);
-            frame.add(panel);
-
-            frame.setVisible(true);
-            panel.setVisible(true);
-
-            panel.repaint();
+        String fileName = server ? "out/" + args[1] : "res/pics/" + System.currentTimeMillis() + ".png";
+        File f = new File(fileName);
+        try {
+            ImageIO.write(bufferedImage, "PNG", f);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+        /*
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setTitle("RainCode");
+        frame.setSize(1600, 800);
+        frame.setLocationRelativeTo(null);
+
+        JPanel panel = new Main(bufferedImage);
+        frame.add(panel);
+
+        frame.setVisible(true);
+        panel.setVisible(true);
+
+        panel.repaint();
+        */
+
     }
 
     public void paint(Graphics g) {
