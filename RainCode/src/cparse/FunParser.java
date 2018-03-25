@@ -178,6 +178,8 @@ public class FunParser implements Parser {
             case "if":
             case "while":
             case "for":
+            case "return":
+            case "switch":
             case "":
                 return false;
             default:
