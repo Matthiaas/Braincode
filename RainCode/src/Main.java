@@ -101,8 +101,8 @@ public class Main extends JPanel {
         }
 
         if(server) {
-            int html_width = 690;
-            int html_height = 538;
+            int html_width = 960;
+            int html_height = 540;
 
             double widthFaktor = width*1.0/ html_width;
             double heightFaktor = height*1.0 / html_height;
