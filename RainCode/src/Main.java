@@ -4,74 +4,52 @@ import Splines.Line;
 import Splines.Point;
 import cparse.FunParser;
 import cparse.GaussDistr;
-import cparse.Parser;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Main extends JPanel {
+public class Main {
+
+    private static final int WIDTH = 3840 * 2;
+    private static final int HEIGHT = 2160 * 2;
+    private static final String[] LOCAL_FILES = new String[]{"res/coreutils/head.c", "res/coreutils/tail.c"};
+    private static final GaussDistr GAUSS = new GaussDistr(42);
+    private static final Random RANDOM = new Random(1);
+
+    private static final int HTML_WIDTH = 960;
+    private static final int HTML_HEIGHT = 540;
 
     private static final Color[] colors = new Color[]{new Color(250, 15, 12), new Color(111, 187, 37),
             new Color(253, 95, 0), new Color(31, 66, 151),
             new Color(46, 172, 192), new Color(250, 245, 35), new Color(237, 36, 141)};
 
     public static void main(String[] args) {
+
         boolean server = args.length == 2;
 
+        FunParser parser = new FunParser(WIDTH, HEIGHT);
 
-        int width = 3840 *2;
-        int height = 2160  *2;
+        List<Line> lines = createLines(parser, server ? new String[]{args[0]} : LOCAL_FILES);
+        List<List<Line>> splitLines = splitLines(lines);
 
-
-        Parser parser = new FunParser(width, height);
-
-        List<Line> lines;
-        if (server) {
-            String[] files = {args[0]};
-            lines = parser.parseFiles(files);
-        } else {
-            String[] files = {"res/coreutils/head.c","res/coreutils/tail.c"};
-            lines = parser.parseFiles(files);
-        }
-
-        Line.scale(lines, width, height);
-
-        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        BufferedImage bufferedImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
         Graphics g = bufferedImage.getGraphics();
         g.setColor(new Color(26, 25, 25));
         g.clearRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
 
-        GaussDistr gauss = new GaussDistr(42);
-        Random r  = new Random(1);
-        int color = (int) (r.nextInt(7));
-
-        /*
-        List<Point> constructs = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            constructs.add(new Point(Math.random() * width, Math.random() * height, 0, ""));
-        }
-        */
-
-        for (int i = 0; i < lines.size(); i++) {
-            Line longLine = lines.get(i);
-
-            List<Line> splitLines = Line.betterHack(longLine, width, height, 3, 4, lines.size(), gauss);
-            //List<Line> splitLines = Line.evenBetterHack(longLine, constructs, 5, gauss, longLine.length(), i);
-
-            for (int j = 0; j < splitLines.size(); j+= 1) {
-                Interpolator interpolator = new Casteljau(splitLines.get(j));
+        int color = (int) (RANDOM.nextInt(7));
+        for (List<Line> splitLine : splitLines) {
+            for (int j = 0; j < splitLine.size(); j++) {
+                Interpolator interpolator = new Casteljau(splitLine.get(j));
                 interpolator.paint(bufferedImage, 0.01, colors[color % colors.length]);
-                if(longLine.length() > 20) j++;
+                if (splitLine.get(j).length() > 20) j++;
             }
-
             color++;
         }
 
@@ -83,20 +61,17 @@ public class Main extends JPanel {
             e.printStackTrace();
         }
 
-        if(server) {
-            int html_width = 960;
-            int html_height = 540;
-
-            double widthFaktor = width*1.0/ html_width;
-            double heightFaktor = height*1.0 / html_height;
+        if (server) {
+            double widthFaktor = WIDTH * 1.0 / HTML_WIDTH;
+            double heightFaktor = HEIGHT * 1.0 / HTML_HEIGHT;
 
             String html = "" +
-                    "<img src=\"out\\" + args[1] + "\" width=\"" + html_width + "\" height=\"" + html_height + "\" alt=\"Brainbow\" usemap=\"#Methods\"> "
+                    "<img src=\"out\\" + args[1] + "\" WIDTH=\"" + HTML_WIDTH + "\" HEIGHT=\"" + HTML_HEIGHT + "\" alt=\"Brainbow\" usemap=\"#Methods\"> "
                     + "<map name=\"Methods\">";
 
 
-            for (String method : ((FunParser) parser).getMethods()) {
-                Point location = ((FunParser) parser).getCentreOfMethod(method);
+            for (String method : parser.getMethods()) {
+                Point location = parser.getCentreOfMethod(method);
                 int xScaled = (int) (location.getX() / widthFaktor);
                 int yScaled = (int) (location.getY() / heightFaktor);
 
@@ -109,7 +84,31 @@ public class Main extends JPanel {
             html = html + "</map>";
             System.out.println(html);
         }
+    }
 
+    private static List<Line> createLines(FunParser parser, String[] filenames) {
+        List<Line> lines = parser.parseFiles(filenames);
+        Line.scale(lines, WIDTH, HEIGHT);
+        return lines;
+    }
+
+    private static List<List<Line>> splitLines(List<Line> longLines) {
+        List<List<Line>> r = new ArrayList<>(longLines.size());
+
+        //List<Point> constructs = new ArrayList<>();
+        //for (int i = 0; i < 5; i++) {
+        //    constructs.add(new Point(Math.RANDOM() * WIDTH, Math.RANDOM() * HEIGHT, 0, ""));
+        //}
+
+        for (int i = 0; i < longLines.size(); i++) {
+            Line longLine = longLines.get(i);
+
+            List<Line> splitLines = Line.betterHack(longLine, WIDTH, HEIGHT, 3, 4, longLines.size(), GAUSS);
+            //List<Line> splitLines = Line.evenBetterHack(longLine, constructs, 5, GAUSS, longLine.length(), i);
+
+            r.add(splitLines);
+        }
+        return r;
     }
 
 }

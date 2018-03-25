@@ -24,7 +24,7 @@ import java.util.*;
  * fooris
  */
 
-public class FunParser implements Parser {
+public class FunParser {
 
 
     public static int PRIMEX = 3840, PRIMEY = 2160, PRIMEZ = 1;
@@ -50,7 +50,6 @@ public class FunParser implements Parser {
      * @param code
      * @return
      */
-    @Override
     public List<Line> parseString(String code) {
         code = prePro(code);
         List<Line> ret = new ArrayList<Line>();
@@ -214,6 +213,27 @@ public class FunParser implements Parser {
            line.add(xy[0] ,xy[1]);
        }
        return line;
+    }
+
+    public List<Line> parseFile(String filename) {
+        try {
+            return parseString(new String(Files.readAllBytes(Paths.get(filename))));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<Line> parseFiles(String[] filenames) {
+        List<Line> lines = new ArrayList<>();
+        try {
+            for (String file : filenames)
+                lines.addAll(parseString(new String(Files.readAllBytes(Paths.get(file)))));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return lines;
     }
 
 }
