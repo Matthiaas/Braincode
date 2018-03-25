@@ -100,22 +100,6 @@ public class Main extends JPanel {
             e.printStackTrace();
         }
 
-        /*
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setTitle("RainCode");
-        frame.setSize(1600, 800);
-        frame.setLocationRelativeTo(null);
-
-        JPanel panel = new Main(bufferedImage);
-        frame.add(panel);
-
-        frame.setVisible(true);
-        panel.setVisible(true);
-
-        panel.repaint();
-        */
-
         if(server) {
             int html_width = 690;
             int html_height = 538;
