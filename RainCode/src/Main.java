@@ -83,6 +83,8 @@ public class Main extends JPanel {
         for (int i = 0; i < lines.size(); i++) {
             Line longLine = lines.get(i);
 
+           // if(Math.random() > 1.0/2) continue;;
+
             List<Line> splitLines = Line.betterHack(longLine, width, height, 2, 4, lines.size(), gauss);
             //List<Line> splitLines = Line.evenBetterHack(longLine, constructs, 5, gauss, longLine.length(), i);
 
@@ -116,6 +118,24 @@ public class Main extends JPanel {
 
         panel.repaint();
         */
+
+        int html_width = 690;
+        int html_hight = 538;
+        String html = "" +
+                "<img src=\"" + args[2] + "\" width=\"" + html_width + "\" height=\"" + html_hight + "\" alt=\"Karte\" usemap=\"#Landkarte\"> "
+                + "<map name=\"Methods\">";
+
+        List included
+        for (Line l : lines) {
+
+    <area shape =\"rect\" coords=\"11,10,80,46\"
+            href =\"http://www.koblenz.de/\" alt=\"Koblenz\" title=\"Koblenz\">
+        }
+
+               html = html + "</map>";
+
+
+
 
     }
 

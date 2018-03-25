@@ -1,10 +1,15 @@
 package cparse;
 
 import Splines.Line;
+import Splines.Point;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.*;
+import java.util.*;
+
 
 /**
  * WARNING!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -21,14 +26,20 @@ import java.util.List;
 
 public class FunParser implements Parser {
 
-    private final int primeX, primeY, primeZ;
-    int index = 0;
-    GaussDistr gaussDistr = new GaussDistr(1337);
+
+    public static final int PRIMEX = 3840, PRIMEY = 2160, PRIMEZ = 43037;
+
+
+    private int index = 0;
+    private GaussDistr gaussDistr = new GaussDistr(1337);
+
+    private Map<String , Point> methodeNameToPoint = new HashMap<>();
+
+
+
 
     public FunParser(int width, int height) {
-        primeX = width;
-        primeY = height;
-        primeZ = 1;
+
     }
 
     /**
@@ -102,7 +113,7 @@ public class FunParser implements Parser {
         System.out.println("------------------------------------------------------");
         functions.stream().forEach(e -> System.out.println(e));
         System.out.println("------------------------------------------------------");
-        return mapNamesToPoints(functions, primeX, primeY, primeZ);
+        return mapNamesToPoints(functions, PRIMEX, PRIMEY, PRIMEZ);
 
     }
 
@@ -122,19 +133,29 @@ public class FunParser implements Parser {
         }
     }
 
+    public Point getCentreofMethode(String name){
+        return methodeNameToPoint.get(name);
+    }
+
+    public Set<String> getMetohdes(){
+        return methodeNameToPoint.keySet();
+    }
+
     private Line mapNamesToPoints(List<String> names, int primex, int primey, int primez){
         Line line = new Line();
         System.out.println("--------------------------------------------");
-        for (String n : names) {
-           int sum = Math.abs(n.hashCode());
+        for (String str : names) {
+           int hash = Math.abs(str.hashCode());
 
-           long count = names.stream().filter(e -> e.equals(n)).count();
-           sum++;
-           double[] xyz = gaussDistr.distribute((sum*235723l)%primex,(sum*238477l)%primey,(sum*424234l)%primez,count);
+           long count = names.stream().filter(e -> e.equals(str)).count();
+           hash++;
+           long x = (hash*235723l)%primex, y = (hash*238477l)%primey, z =(hash*424234l)%primez;
+           methodeNameToPoint.put(str , new Point(x,y,z));
+           double[] xyz = gaussDistr.distribute(x,y,z,count);
 
             //System.out.println(n + "\t\t\tx: " + xyz[0] + "\ty: " + xyz[1] + "\tz: " + xyz[2]);
 
-           line.add(xyz[0] ,xyz[1], xyz[2], n);
+           line.add(xyz[0] ,xyz[1], xyz[2]);
        }
        return line;
     }
