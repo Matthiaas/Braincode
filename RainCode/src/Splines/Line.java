@@ -122,8 +122,8 @@ public class Line {
 
         for (Line l : lines) {
             for (Point p : l.points) {
-                p.x = 0.05 * width + p.x * 0.90;
-                p.y = 0.05 * height + p.y * 0.90;
+                p.x = 0.1 * width + p.x * 0.8;
+                p.y = 0.15 * height + p.y * 0.7;
             }
         }
     }

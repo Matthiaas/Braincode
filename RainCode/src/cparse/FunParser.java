@@ -27,7 +27,7 @@ import java.util.*;
 public class FunParser implements Parser {
 
 
-    public static final int PRIMEX = 3840, PRIMEY = 2160, PRIMEZ = 43037;
+    public static int PRIMEX = 3840, PRIMEY = 2160, PRIMEZ = 1;
 
 
     private int index = 0;
@@ -39,7 +39,8 @@ public class FunParser implements Parser {
 
 
     public FunParser(int width, int height) {
-
+        PRIMEX = width;
+        PRIMEY = height;
     }
 
     /**
@@ -82,21 +83,22 @@ public class FunParser implements Parser {
         return ret;
     }
 
-    public final static double DROPOUT  = 0.05;
+    public final static double DROPOUT  = .01;
     private String prePro(String code){
-
+        int in = 0;
+        //System.out.println(code);
         HashMap<String, Integer>  funcs = new HashMap<>();
         int methodGlobalCount = 0;
+        String nameBuffer = "";
+        while(in < code.length()-1) {
 
-        while(index < code.length()-1) {
-            String nameBuffer = "";
             char c;
 
 
 
-            c = code.charAt(++index);
+            c = code.charAt(++in);
             if (c == ' ') {
-                while (c == ' ') c = code.charAt(index++);
+                while (c == ' ') c = code.charAt(in++);
                 if (c == '(') {
                     if (isFunction(nameBuffer)) {
                         if (funcs.containsKey(nameBuffer))
@@ -123,11 +125,12 @@ public class FunParser implements Parser {
         }
 
         for (Map.Entry<String , Integer> entr : funcs.entrySet()){
+
             if(entr.getValue() < methodGlobalCount * DROPOUT){
                 code = code.replaceAll(entr.getKey() + " *\\(.*" , " ");
-            }
+            }else
+                System.out.println(entr.getValue() + ",    " + (methodGlobalCount * DROPOUT) + "  "+ entr.getKey());
         }
-
         return code;
     }
 
@@ -159,9 +162,9 @@ public class FunParser implements Parser {
                 nameBuffer = "";
             }
         }
-        System.out.println("------------------------------------------------------");
-        functions.stream().forEach(e -> System.out.println(e));
-        System.out.println("------------------------------------------------------");
+       // System.out.println("------------------------------------------------------");
+       // functions.stream().forEach(e -> System.out.println(e));
+      //  System.out.println("------------------------------------------------------");
         return mapNamesToPoints(functions, PRIMEX, PRIMEY, PRIMEZ);
 
     }
@@ -176,6 +179,7 @@ public class FunParser implements Parser {
             case "if":
             case "while":
             case "for":
+            case "":
                 return false;
             default:
                 return true;
