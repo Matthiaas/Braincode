@@ -56,7 +56,7 @@ public class Line {
     }
 
     public String toString() {
-        return "Line: \n" + points.stream().map(p -> "(" + p.x + "," + p.y + "," + p.z + ")").collect(Collectors.joining(","));
+        return "Line: \n" + points.stream().map(p -> "(" + p.x + "," + p.y + ")").collect(Collectors.joining(","));
     }
 
     public static List<Line> betterHack(Line line, int width, int height, int numPoints, int numConnections, int count, GaussDistr g) {
@@ -64,7 +64,7 @@ public class Line {
 
         List<Point> randomPoints = new ArrayList<>(numPoints);
         for (int i = 0; i < numPoints; i++) {
-            randomPoints.add(new Point(rand.nextDouble()* width, rand.nextDouble() * height));
+            randomPoints.add(new Point(rand.nextDouble() * width, rand.nextDouble() * height));
         }
 
         int randomIndex = 0;
