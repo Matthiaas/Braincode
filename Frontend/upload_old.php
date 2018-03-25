@@ -40,9 +40,9 @@ if ($uploadOk == 0) {
     }
 }
 
-$t = time();
-echo (exec('java -jar RainCode.jar ' . $target_file . ' output'  . $t . '.png'));
-echo "<br><a style='color:white' href='out/output" . $t . ".png' download> Download Image in full quality </a>";
+
+echo (exec('java -jar RainCode.jar ' . $target_file . ' output.png'));
+echo "<br><a style='color:white' href='out/output.png' download> Download Image in full quality </a>";
 ?>
 
 </body>
