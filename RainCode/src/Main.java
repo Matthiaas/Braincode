@@ -103,8 +103,8 @@ public class Main {
         for (int i = 0; i < longLines.size(); i++) {
             Line longLine = longLines.get(i);
 
-            List<Line> splitLines = Line.betterHack(longLine, WIDTH, HEIGHT, 3, 4, longLines.size(), GAUSS);
-            //List<Line> splitLines = Line.evenBetterHack(longLine, constructs, 5, GAUSS, longLine.length(), i);
+            List<Line> splitLines = Line.lineSplitV1(longLine, WIDTH, HEIGHT, 3, 4, longLines.size(), GAUSS);
+            //List<Line> splitLines = Line.lineSplitV2(longLine, constructs, 5, GAUSS, longLine.length(), i);
 
             r.add(splitLines);
         }

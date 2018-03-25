@@ -13,7 +13,7 @@ public class Line {
     private List<Point> points;
 
     private static Random rand = new Random(24);
-    private double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE, maxX = 0, maxY = 0;
+    private double minX = Double.MAX_VALUE, maxX = 0;
 
     public Line() {
         points = new ArrayList<>();
@@ -21,30 +21,6 @@ public class Line {
 
     public Line(List<Point> points) {
         this.points = points;
-    }
-
-    public double[] getX() {
-        double[] r = new double[points.size()];
-        for (int i = 0; i < points.size(); i++) {
-
-            r[i] = points.get(i).x;
-            minX = Double.min(r[i], minX);
-            maxX = Double.max(r[i], maxX);
-            r[i] = points.get(i).x;
-
-        }
-        return r;
-    }
-
-    public double[] getY() {
-        double[] r = new double[points.size()];
-        for (int i = 0; i < points.size(); i++) {
-            r[i] = points.get(i).y;
-            minY = Double.min(r[i], minY);
-            maxY = Double.max(r[i], maxY);
-            r[i] = points.get(i).y;
-        }
-        return r;
     }
 
     public void add(double x, double y) {
@@ -59,7 +35,50 @@ public class Line {
         return "Line: \n" + points.stream().map(p -> "(" + p.x + "," + p.y + ")").collect(Collectors.joining(","));
     }
 
-    public static List<Line> betterHack(Line line, int width, int height, int numPoints, int numConnections, int count, GaussDistr g) {
+    public static void scale(List<Line> lines, int width, int height) {
+
+        for (Line l : lines) {
+            for (Point p : l.points) {
+                p.x = 0.1 * width + p.x * 0.8;
+                p.y = 0.15 * height + p.y * 0.7;
+            }
+        }
+    }
+
+    public double[] getX() {
+        double[] r = new double[points.size()];
+        for (int i = 0; i < points.size(); i++) {
+            r[i] = points.get(i).x;
+            minX = Double.min(r[i], minX);
+            maxX = Double.max(r[i], maxX);
+            r[i] = points.get(i).x;
+
+        }
+        return r;
+    }
+
+    public double[] getY() {
+        double[] r = new double[points.size()];
+        for (int i = 0; i < points.size(); i++) {
+            r[i] = points.get(i).y;
+            r[i] = points.get(i).y;
+        }
+        return r;
+    }
+
+    public double getMinX() {
+        return minX;
+    }
+
+    public double getMaxX() {
+        return maxX;
+    }
+
+    public void sort() {
+        points.sort((l, r) -> ((Double.compare(l.x, r.x))));
+    }
+
+    public static List<Line> lineSplitV1(Line line, int width, int height, int numPoints, int numConnections, int count, GaussDistr g) {
         List<Line> r = new ArrayList<>();
 
         List<Point> randomPoints = new ArrayList<>(numPoints);
@@ -82,7 +101,7 @@ public class Line {
         return r;
     }
 
-    public static List<Line> evenBetterHack(Line line, List<Point> constructs, int numConnections, GaussDistr g, int count, int offset) {
+    public static List<Line> lineSplitV2(Line line, List<Point> constructs, int numConnections, GaussDistr g, int count, int offset) {
         List<Line> r = new ArrayList<>();
 
         for (int i = 0; i < line.points.size(); i++) {
@@ -97,37 +116,5 @@ public class Line {
             }
         }
         return r;
-    }
-
-
-    public static void scale(List<Line> lines, int width, int height) {
-
-        for (Line l : lines) {
-            for (Point p : l.points) {
-                p.x = 0.1 * width + p.x * 0.8;
-                p.y = 0.15 * height + p.y * 0.7;
-            }
-        }
-    }
-
-
-    public double getMinX() {
-        return minX;
-    }
-
-    public double getMinY() {
-        return minY;
-    }
-
-    public double getMaxX() {
-        return maxX;
-    }
-
-    public double getMaxY() {
-        return maxY;
-    }
-
-    public void sort() {
-        points.sort((l, r) -> ((Double.compare(l.x, r.x))));
     }
 }
