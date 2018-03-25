@@ -3,23 +3,21 @@ package cparse;
 import Splines.Line;
 import Splines.Point;
 
-
-import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 
 /**
  * WARNING!!!!!!!!!!!!!!!!!!!!!!!!!
- *
+ * <p>
  * this class is toxic,
  * do not enter without proper supervision!
  * you WILL break something and I will
  * track you down, I will find you and swear to god
  * I WILL MURDER YOU IN YOUR sleep
- *
+ * <p>
  * kind regards,
  * fooris
  */
@@ -28,14 +26,12 @@ public class FunParser {
 
 
     public static int PRIMEX = 3840, PRIMEY = 2160, PRIMEZ = 1;
-    public final static double DROPOUT  = .005;
+    public final static double DROPOUT = .005;
 
     private int index = 0;
     private GaussDistr gaussDistr = new GaussDistr(1337);
 
-    private Map<String , Point> methodeNameToPoint = new HashMap<>();
-
-
+    private Map<String, Point> methodeNameToPoint = new HashMap<>();
 
 
     public FunParser(int width, int height) {
@@ -44,7 +40,6 @@ public class FunParser {
     }
 
     /**
-     *
      * super magic main method of class
      *
      * @param code
@@ -62,20 +57,19 @@ public class FunParser {
             if (c == '/') {
                 c = code.charAt(++index);
                 if (c == '/') {
-                   do{
-                       c = code.charAt(++index);
-                   }while (c != '\n');
-                } else if (c == '*') {
-                    do{
+                    do {
                         c = code.charAt(++index);
-                    }while (c != '*' && code.charAt(index+1) != '/');
+                    } while (c != '\n');
+                } else if (c == '*') {
+                    do {
+                        c = code.charAt(++index);
+                    } while (c != '*' && code.charAt(index + 1) != '/');
                     index++;
                 }
-            }
-            else if(c == '{'){
+            } else if (c == '{') {
                 index++;
                 Line line = findCalls(code);
-                if (line.length()>=4)
+                if (line.length() >= 4)
                     ret.add(line);
             }
         }
@@ -84,18 +78,18 @@ public class FunParser {
     }
 
 
-    private String prePro(String code){
+    private String prePro(String code) {
         int in = 0;
-        HashMap<String, Integer>  funcs = new HashMap<>();
+        HashMap<String, Integer> funcs = new HashMap<>();
         int methodGlobalCount = 0;
         String nameBuffer = "";
-       // code = code.replaceAll("/\\*(.|[\\r\\n])*?\\*/", " ");
-      //  code = code.replaceAll("//.*(?=\\n)" ," ");
+        // code = code.replaceAll("/\\*(.|[\\r\\n])*?\\*/", " ");
+        //  code = code.replaceAll("//.*(?=\\n)" ," ");
 
-        while(in < code.length()-1) {
+        while (in < code.length() - 1) {
 
             char c;
-           c = code.charAt(++in);
+            c = code.charAt(++in);
             if (c == ' ') {
                 while (c == ' ') c = code.charAt(in++);
                 if (c == '(') {
@@ -111,11 +105,11 @@ public class FunParser {
             } else if (goodChar(c)) {
                 nameBuffer += c + "";
             } else if (c == '(') {
-                if (isFunction(nameBuffer)){
-                    if(funcs.containsKey(nameBuffer))
-                        funcs.put(nameBuffer,funcs.get(nameBuffer)+1);
+                if (isFunction(nameBuffer)) {
+                    if (funcs.containsKey(nameBuffer))
+                        funcs.put(nameBuffer, funcs.get(nameBuffer) + 1);
                     else
-                        funcs.put(nameBuffer , 1);
+                        funcs.put(nameBuffer, 1);
                     methodGlobalCount++;
                 }
             } else {
@@ -123,16 +117,16 @@ public class FunParser {
             }
         }
 
-        for (Map.Entry<String , Integer> entr : funcs.entrySet()){
+        for (Map.Entry<String, Integer> entr : funcs.entrySet()) {
 
-            if(entr.getValue() < methodGlobalCount * DROPOUT){
-                code = code.replaceAll(entr.getKey() + " *\\(.*" , " ");
+            if (entr.getValue() < methodGlobalCount * DROPOUT) {
+                code = code.replaceAll(entr.getKey() + " *\\(.*", " ");
             }
         }
         return code;
     }
 
-    private Line findCalls(String code){
+    private Line findCalls(String code) {
         int brackets = 1;
         String nameBuffer = "";
         char c;
@@ -140,7 +134,7 @@ public class FunParser {
         List<String> functions = new LinkedList<String>();
 
         boolean mayReset = false;
-        while(brackets > 0 && index<code.length()){
+        while (brackets > 0 && index < code.length()) {
             c = code.charAt(index);
             while (c == ' ') {
                 index++;
@@ -148,21 +142,19 @@ public class FunParser {
                 mayReset = true;
             }
 
-            if(goodChar(c)){
-                if(mayReset){
+            if (goodChar(c)) {
+                if (mayReset) {
                     nameBuffer = "";
                     mayReset = false;
                 }
-                nameBuffer += c ;
-            }
-            else if(c == '('){
-                if(isFunction(nameBuffer)){
+                nameBuffer += c;
+            } else if (c == '(') {
+                if (isFunction(nameBuffer)) {
                     functions.add(nameBuffer);
                 }
-            }
-            else{
-                if(c == '{') brackets++;
-                if(c == '}') brackets--;
+            } else {
+                if (c == '{') brackets++;
+                if (c == '}') brackets--;
                 nameBuffer = "";
             }
             index++;
@@ -173,12 +165,12 @@ public class FunParser {
     }
 
 
-    private boolean goodChar(char c){
+    private boolean goodChar(char c) {
         return ((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')) || (c == '_');
     }
 
-    private boolean isFunction(String name){
-        switch (name){
+    private boolean isFunction(String name) {
+        switch (name) {
             case "if":
             case "else":
             case "elseif":
@@ -193,29 +185,29 @@ public class FunParser {
         }
     }
 
-    public Point getCentreOfMethod(String name){
+    public Point getCentreOfMethod(String name) {
         return methodeNameToPoint.get(name);
     }
 
-    public Set<String> getMethods(){
+    public Set<String> getMethods() {
         return methodeNameToPoint.keySet();
     }
 
-    private Line mapNamesToPoints(List<String> names, int primex, int primey, int primez){
+    private Line mapNamesToPoints(List<String> names, int primex, int primey, int primez) {
         Line line = new Line();
 
         for (String str : names) {
-           int hash = Math.abs(str.hashCode());
+            int hash = Math.abs(str.hashCode());
 
-           long count = names.stream().filter(e -> e.equals(str)).count();
-           hash++;
-           long x = (hash*235723l)%primex, y = (hash*238477l)%primey, z =(hash*424234l)%primez;
-           methodeNameToPoint.put(str , new Point(x,y));
-           double[] xy = gaussDistr.distribute(x,y,count);
+            long count = names.stream().filter(e -> e.equals(str)).count();
+            hash++;
+            long x = (hash * 235723l) % primex, y = (hash * 238477l) % primey, z = (hash * 424234l) % primez;
+            methodeNameToPoint.put(str, new Point(x, y));
+            double[] xy = gaussDistr.distribute(x, y, count);
 
-           line.add(xy[0] ,xy[1]);
-       }
-       return line;
+            line.add(xy[0], xy[1]);
+        }
+        return line;
     }
 
     public List<Line> parseFile(String filename) {

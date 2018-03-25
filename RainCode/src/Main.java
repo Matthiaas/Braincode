@@ -55,7 +55,6 @@ public class Main {
         }
 
 
-
         String fileName = server ? "out/" + args[1] : "res/pics/" + System.currentTimeMillis() + ".png";
         File f = new File(fileName);
         try {
@@ -74,7 +73,7 @@ public class Main {
 
             for (String method : parser.getMethods()) {
                 Point location = parser.getCentreOfMethod(method);
-                location.scale(WIDTH , HEIGHT);
+                location.scale(WIDTH, HEIGHT);
                 int xScaled = (int) (location.getX() / widthFaktor);
                 int yScaled = (int) (location.getY() / heightFaktor);
 

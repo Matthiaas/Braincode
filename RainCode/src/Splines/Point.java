@@ -20,7 +20,7 @@ public class Point {
     }
 
 
-    public void scale(int width  , int height){
+    public void scale(int width, int height) {
         x = 0.1 * width + x * 0.8;
         y = 0.15 * height + y * 0.7;
     }
