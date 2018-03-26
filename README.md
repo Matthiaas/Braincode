@@ -1,4 +1,4 @@
-# openCodes
+# BrainCode
 Cpopyright (c) 2018 Mathias Bungeroth, Felix Fischer, Sebastian Kappes, Floris Westermann
 
 This program is free software: you can redistribute it and/or modify
