@@ -1,6 +1,8 @@
 # Braincode
 Cpopyright (c) 2018 Mathias Bungeroth, Felix Fischer, Sebastian Kappes, Floris Westermann
 
+Website: http://ec2-54-157-39-72.compute-1.amazonaws.com/
+
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
